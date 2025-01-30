@@ -1,31 +1,48 @@
 #pragma once
 
-template<typename T>
-class vector
+namespace impl
 {
-
-private:
-    void reallocate(std:size_t newCapacity)
+    template<typename T>
+    class Vector
     {
-        T* new_data = (T*)::operator new(new_capacity * sizeof(T));
+    public:
+        vector() : data_{nullptr}, capacity_{}, size_{}
+        {}
 
-        if (newCapacity < size_)
+        void push_back(const T& value)
         {
-            size_ = newCapacity;
+            if (size >= capacity)
+                reallocate(capacity + capacity/2);
+
+            data[size] = std::move(value);
+            size++;
         }
 
-        for (std::size_t i = 0; i < size_; ++i)
+        std::size_t size() const { return size_; }
+
+    private:
+        void reallocate(std:size_t newCapacity)
         {
-            new_data[i] = std::move(data[i]);
+            T* new_data = (T*)::operator new(new_capacity * sizeof(T));
+
+            if (newCapacity < size_)
+            {
+                size_ = newCapacity;
+            }
+
+            for (std::size_t i = 0; i < size_; ++i)
+            {
+                new_data[i] = std::move(data[i]);
+            }
+
+            delete[] data_;
+            data_ = new_data;
+            capacity_ = newCapacity;
         }
 
-        delete[] data_;
-        data_ = new_data;
-        capacity_ = newCapacity;
-    }
-
-private:
-    T* data_;
-    std::size_t capacity_;
-    std:size_t size_;
-};
+    private:
+        T* data_;
+        std::size_t capacity_;
+        std:size_t size_;
+    };
+}
