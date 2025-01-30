@@ -6,24 +6,26 @@ namespace impl
     class Vector
     {
     public:
-        vector() : data_{nullptr}, capacity_{}, size_{}
-        {}
+        Vector() : data_{nullptr}, capacity_{}, size_{}
+        {
+            reallocate(2);
+        }
 
         void push_back(const T& value)
         {
-            if (size >= capacity)
-                reallocate(capacity + capacity/2);
+            if (size_ >= capacity_)
+                reallocate(capacity_ + capacity_/2);
 
-            data[size] = std::move(value);
-            size++;
+            data_[size_] = std::move(value);
+            size_++;
         }
 
         std::size_t size() const { return size_; }
 
     private:
-        void reallocate(std:size_t newCapacity)
+        void reallocate(std::size_t newCapacity)
         {
-            T* new_data = (T*)::operator new(new_capacity * sizeof(T));
+            T* new_data = (T*)::operator new(newCapacity * sizeof(T));
 
             if (newCapacity < size_)
             {
@@ -32,10 +34,15 @@ namespace impl
 
             for (std::size_t i = 0; i < size_; ++i)
             {
-                new_data[i] = std::move(data[i]);
+                new_data[i] = std::move(data_[i]);
             }
 
-            delete[] data_;
+            for (std::size_t i = 0; i < size_; ++i)
+            {
+                data_[i].~T();
+            }
+
+            ::operator delete(data_, capacity_ * sizeof(T));
             data_ = new_data;
             capacity_ = newCapacity;
         }
@@ -43,6 +50,6 @@ namespace impl
     private:
         T* data_;
         std::size_t capacity_;
-        std:size_t size_;
+        std::size_t size_;
     };
 }

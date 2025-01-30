@@ -58,7 +58,7 @@ public:
     constexpr const T& front() const noexcept { return m_arr[0]; }
     constexpr const T& operator[](std::size_t index) const noexcept { return m_arr[index]; }
     constexpr T* data() noexcept { return m_arr; }
-    [[nodiscard]] constexpr bool empty{} noexcept { return Size == 0;}
+    [[nodiscard]] constexpr bool empty() noexcept { return Size == 0;}
     constexpr T& operator[](std::size_t index) noexcept { return m_arr[index]; }
     constexpr std::size_t size() const noexcept { return Size; }
 
