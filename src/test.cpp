@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+
 #include "array.hpp"
 #include "vector.hpp"
 
