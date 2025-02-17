@@ -6,11 +6,13 @@ namespace impl
     class Vector
     {
     public:
-        Vector() : m_Arr{nullptr}, m_Capacity{}, m_Size{}
+        Vector() 
+            : m_Capacity{1}, m_Size{0}
         {
-            re_alloc(2);
+            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
         }
-        Vector(size_t size) : m_Capacity{size}, m_Size{}
+        Vector(size_t size) 
+            : m_Capacity{size}, m_Size{}
         {
             m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
             for (size_t i = 0; i < size; ++i)
@@ -18,7 +20,8 @@ namespace impl
                 new(&m_Arr[m_Size++]) T();
             }
         }
-        Vector(size_t size, const T& value) : m_Capacity{size}, m_Size{}
+        Vector(size_t size, const T& value) 
+            : m_Capacity{size}, m_Size{}
         {
             m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
             for (size_t i = 0; i < size; ++i)
@@ -26,7 +29,8 @@ namespace impl
                 new(&m_Arr[m_Size++]) T(value);
             }
         }
-        Vector(const Vector<T>& other) : m_Capacity{other.m_Capacity}, m_Size{}
+        Vector(const Vector<T>& other) 
+            : m_Capacity{other.m_Capacity}, m_Size{}
         {
             m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
 
@@ -35,13 +39,21 @@ namespace impl
                 new(&m_Arr[m_Size++]) T(other.m_Arr[i]);
             }
         }
-        T& operator= (const Vector<T>& other)
+        Vector& operator= (const Vector<T>& other)
         {
             if (this != &other)
             {
-                this->~Vector();
+                // Explicitly calling the destructor on this (i.e. this->~Vector()) destroys your object entirely. 
+                // When you do that, you're not simply "clearing" the object's resources; you're destroying the entire object, 
+                // including its vtable (if polymorphic) and its internal state. 
+                // This leaves your object in an indeterminate state and can lead to undefined behavior when you try to use it afterward.
+                // Remember that an object which has been moved from should be left in a valid state
+                // this->~Vector();
+                clear();
+                ::operator delete(m_Arr, m_Capacity * sizeof(T));
 
                 m_Capacity = other.m_Capacity;
+                m_Size = 0;
                 m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
                 
                 for (size_t i = 0; i < other.m_Size; ++i)
@@ -52,34 +64,32 @@ namespace impl
 
             return *this;
         }
-        Vector(Vector<T>&& other) : m_Capacity{other.m_Capacity}, m_Size{}
+        Vector(Vector<T>&& other) noexcept
+            : m_Arr(other.m_Arr), m_Capacity(other.m_Capacity), m_Size(other.m_Size)
         {
-            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
-
-            for (size_t i = 0; i < other.m_Size; ++i)
-            {
-                new(&m_Arr[m_Size++]) T(std::move(other.m_Arr[i]));
-            }
-
-            other.~Vector();
+            other.m_Arr = nullptr;
+            other.m_Capacity = 0;
+            other.m_Size = 0;
         }
-        T& operator= (Vector<T>&& other)
+        Vector<T>& operator=(Vector<T>&& other) noexcept
         {
             if (this != &other)
             {
-                this->~Vector();
+                // Same problem as for the copy assignment operator, see above
+                // this->~Vector();
+                clear();
+                ::operator delete(m_Arr, m_Capacity * sizeof(T));
 
+                // Steal resources
+                m_Arr = other.m_Arr;
                 m_Capacity = other.m_Capacity;
-                m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
-                
-                for (size_t i = 0; i < other.m_Size; ++i)
-                {
-                    new(&m_Arr[m_Size++]) T(std::move(other.m_Arr[i]));
-                }
+                m_Size = other.m_Size;
 
-                other.~Vector();
+                // Leave other in a safe state
+                other.m_Arr = nullptr;
+                other.m_Capacity = 0;
+                other.m_Size = 0;
             }
-
             return *this;
         }
         ~Vector() noexcept
