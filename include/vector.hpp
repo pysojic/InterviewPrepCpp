@@ -6,50 +6,94 @@ namespace impl
     class Vector
     {
     public:
-        Vector() : data_{nullptr}, capacity_{}, size_{}
+        Vector() : m_Arr{nullptr}, m_Capacity{}, m_Size{}
         {
-            reallocate(2);
+            re_alloc(2);
+        }
+        Vector(size_t size) : m_Capacity{size}, m_Size{size}
+        {
+            re_alloc(m_Capacity);
+        }
+        ~Vector() noexcept
+        {
+            clear();
+            ::operator delete(m_Arr, m_Capacity * sizeof(T));
+        }
+        
+        void clear()
+        {
+            for (size_t i = 0; i < m_Size; ++i)
+            {
+                m_Arr[i].~T();
+            }
+            m_Size = 0;
+        }
+        void push_back(const T& obj)
+        {
+            if (m_Size >= m_Capacity)
+                re_alloc(m_Capacity + (m_Capacity >> 1));
+            
+            m_Arr[m_Size++] = obj;
+        }
+        void push_back(T&& obj)
+        {
+            if (m_Size >= m_Capacity)
+                re_alloc(m_Capacity + (m_Capacity >> 1));
+            
+            m_Arr[m_Size++] = std::move(obj);
+        }
+        void pop_back()
+        {
+            if (m_Size > 0)
+            {
+                m_Arr[m_Size - 1].~T();
+                --m_Size;
+            }
+        }
+        template <typename... Args>
+        void emplace_back(Args&&... args)
+        {
+            if (m_Size >= m_Capacity)
+                re_alloc(m_Capacity + (m_Capacity >> 1));
+
+            new(&m_Arr[m_Size++]) T(std::forward<Args>(args)...);
         }
 
-        void push_back(const T& value)
-        {
-            if (size_ >= capacity_)
-                reallocate(capacity_ + capacity_/2);
+        size_t capacity() const noexcept { return m_Capacity; }
+        size_t size() const noexcept { return m_Size; }
+        void print() const {
+            if (m_Capacity == 0)
+                return;
 
-            data_[size_] = std::move(value);
-            size_++;
+            for (size_t i = 0; i < m_Size; ++i )
+            {
+                std::cout << m_Arr[i] << '|';
+            }
+
+            std::cout << std::endl;
         }
-
-        std::size_t size() const { return size_; }
 
     private:
-        void reallocate(std::size_t newCapacity)
-        {
-            T* new_data = (T*)::operator new(newCapacity * sizeof(T));
+        void re_alloc(size_t newCapacity)
+        {                 
+            T* ptr = static_cast<T*>(::operator new(newCapacity * sizeof(T)));
 
-            if (newCapacity < size_)
+            for (size_t i = 0; i < m_Size; ++i)
             {
-                size_ = newCapacity;
+                // ptr[i] = std::move(m_Arr[i]); // Does not work, ptr[i] is unassigned memory, cannot move assign on unitialized memory
+                new(&ptr[i]) T(std::move(m_Arr[i]));
+                m_Arr[i].~T();
             }
 
-            for (std::size_t i = 0; i < size_; ++i)
-            {
-                new_data[i] = std::move(data_[i]);
-            }
-
-            for (std::size_t i = 0; i < size_; ++i)
-            {
-                data_[i].~T();
-            }
-
-            ::operator delete(data_, capacity_ * sizeof(T));
-            data_ = new_data;
-            capacity_ = newCapacity;
+            ::operator delete(m_Arr, m_Capacity * sizeof(T));
+            m_Capacity = newCapacity;
+            m_Arr = ptr;
         }
 
-    private:
-        T* data_;
-        std::size_t capacity_;
-        std::size_t size_;
+        
+        private:
+        T* m_Arr;
+        size_t m_Capacity;
+        size_t m_Size;
     };
 }

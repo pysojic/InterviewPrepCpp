@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug MyCppProject",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/MyCppProject", // Path to your built executable
+            "cwd": "${workspaceFolder}",           // Current working directory
+        }
+    ]
+}
