@@ -10,9 +10,21 @@ namespace impl
         {
             re_alloc(2);
         }
-        Vector(size_t size) : m_Capacity{size}, m_Size{size}
+        Vector(size_t size) : m_Capacity{size}, m_Size{}
         {
-            re_alloc(m_Capacity);
+            m_Arr = (T*)::operator new(size * sizeof(T));
+            for (size_t i = 0; i < size; ++i)
+            {
+                new(&m_Arr[m_Size++]) T();
+            }
+        }
+        Vector(size_t size, const T& value) : m_Capacity{size}, m_Size{}
+        {
+            m_Arr = (T*)::operator new(size * sizeof(T));
+            for (size_t i = 0; i < size; ++i)
+            {
+                new(&m_Arr[m_Size++]) T(value);
+            }
         }
         ~Vector() noexcept
         {
@@ -33,14 +45,22 @@ namespace impl
             if (m_Size >= m_Capacity)
                 re_alloc(m_Capacity + (m_Capacity >> 1));
             
-            m_Arr[m_Size++] = obj;
+            // When you allocate raw memory with ::operator new, no objects are constructed in that memory. 
+            // Directly assigning to m_Arr[m_Size] is essentially writing to uninitialized memory, 
+            // which is undefined behavior—even if it appears to work in some cases.
+            // m_Arr[m_Size++] = obj;
+            new(&m_Arr[m_Size++]) T(obj);
         }
         void push_back(T&& obj)
         {
             if (m_Size >= m_Capacity)
                 re_alloc(m_Capacity + (m_Capacity >> 1));
             
-            m_Arr[m_Size++] = std::move(obj);
+            // When you allocate raw memory with ::operator new, no objects are constructed in that memory. 
+            // Directly assigning to m_Arr[m_Size] is essentially writing to uninitialized memory, 
+            // which is undefined behavior—even if it appears to work in some cases.
+            // m_Arr[m_Size++] = std::move(obj);
+            new(&m_Arr[m_Size++]) T(std::move(obj));
         }
         void pop_back()
         {

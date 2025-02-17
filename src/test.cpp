@@ -54,8 +54,10 @@ int main()
     // impl::Vector<testClass> vec;
     // std::cout << vec.capacity() << std::endl;
 
-    impl::Vector<std::string> vec;
+    impl::Vector<std::string> vec(10, "Hello");
     std::string str("I will get this");
+    vec.print();
+
 
     vec.push_back("Hello");
     vec.push_back("The");
