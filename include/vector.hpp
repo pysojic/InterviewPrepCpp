@@ -20,7 +20,7 @@ namespace impl
             {
                 for (size_t i = 0; i < size; ++i) 
                 {
-                    new(&m_Arr[m_Size++]) T();
+                    std::construct_at(&m_Arr[m_Size++]); // default constructing
                 }
             } 
             catch (...) 
@@ -40,7 +40,7 @@ namespace impl
             {
                 for (size_t i = 0; i < size; ++i) 
                 {
-                    new(&m_Arr[m_Size++]) T(value);
+                    std::construct_at(&m_Arr[m_Size++], value);
                 }
             } 
             catch (...) 
@@ -59,7 +59,7 @@ namespace impl
             {
                 for (size_t i = 0; i < other.m_Size; ++i) 
                 {
-                    new(&m_Arr[m_Size++]) T(other.m_Arr[i]);
+                    std::construct_at(&m_Arr[m_Size++], other.m_Arr[i]);
                 }
             } 
             catch (...) 
@@ -88,7 +88,7 @@ namespace impl
                 
                 for (size_t i = 0; i < other.m_Size; ++i)
                 {
-                    new(&m_Arr[m_Size++]) T(other.m_Arr[i]);
+                    std::construct_at(&m_Arr[m_Size++], other.m_Arr[i]);
                 }
             }
 
@@ -145,7 +145,7 @@ namespace impl
             // Directly assigning to m_Arr[m_Size] is essentially writing to uninitialized memory, 
             // which is undefined behavior—even if it appears to work in some cases.
             // m_Arr[m_Size++] = obj;
-            new(&m_Arr[m_Size++]) T(obj);
+            std::construct_at(&m_Arr[m_Size++], obj);
         }
         void push_back(T&& obj)
         {
@@ -156,7 +156,7 @@ namespace impl
             // Directly assigning to m_Arr[m_Size] is essentially writing to uninitialized memory, 
             // which is undefined behavior—even if it appears to work in some cases.
             // m_Arr[m_Size++] = std::move(obj);
-            new(&m_Arr[m_Size++]) T(std::move(obj));
+            std::construct_at(&m_Arr[m_Size++], std::move(obj));
         }
         void pop_back()
         {
@@ -172,12 +172,13 @@ namespace impl
             if (m_Size >= m_Capacity)
                 re_alloc(m_Capacity + (m_Capacity >> 1));
 
-            new(&m_Arr[m_Size++]) T(std::forward<Args>(args)...);
+            std::construct_at(&m_Arr[m_Size++], std::forward<Args>(args)...);
         }
 
         size_t capacity() const noexcept { return m_Capacity; }
         size_t size() const noexcept { return m_Size; }
-        void print() const {
+        void print() const 
+        {
             if (m_Capacity == 0)
                 return;
 
@@ -197,7 +198,7 @@ namespace impl
             for (size_t i = 0; i < m_Size; ++i)
             {
                 // ptr[i] = std::move(m_Arr[i]); // Does not work, ptr[i] is unassigned memory, cannot move assign on unitialized memory
-                new(&ptr[i]) T(std::move(m_Arr[i]));
+                std::construct_at(&ptr[i], std::move(m_Arr[i]));
                 m_Arr[i].~T();
             }
 
@@ -207,7 +208,7 @@ namespace impl
         }
 
         
-        private:
+    private:
         T* m_Arr;
         size_t m_Capacity;
         size_t m_Size;
