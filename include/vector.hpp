@@ -11,32 +11,62 @@ namespace impl
         {
             m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
         }
-        Vector(size_t size) 
-            : m_Capacity{size}, m_Size{}
-        {
-            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
-            for (size_t i = 0; i < size; ++i)
-            {
-                new(&m_Arr[m_Size++]) T();
-            }
-        }
-        Vector(size_t size, const T& value) 
-            : m_Capacity{size}, m_Size{}
-        {
-            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
-            for (size_t i = 0; i < size; ++i)
-            {
-                new(&m_Arr[m_Size++]) T(value);
-            }
-        }
-        Vector(const Vector<T>& other) 
-            : m_Capacity{other.m_Capacity}, m_Size{}
-        {
-            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
 
-            for (size_t i = 0; i < other.m_Size; ++i)
+        Vector(size_t size) 
+            : m_Capacity{size}, m_Size{0}
+        {
+            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
+            try 
             {
-                new(&m_Arr[m_Size++]) T(other.m_Arr[i]);
+                for (size_t i = 0; i < size; ++i) 
+                {
+                    new(&m_Arr[m_Size++]) T();
+                }
+            } 
+            catch (...) 
+            {
+                // If construction fails, clean up constructed elements and free memory.
+                clear();
+                ::operator delete(m_Arr, m_Capacity * sizeof(T));
+                throw;
+            }
+        }
+
+        Vector(size_t size, const T& value) 
+            : m_Capacity{size}, m_Size{0}
+        {
+            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
+            try 
+            {
+                for (size_t i = 0; i < size; ++i) 
+                {
+                    new(&m_Arr[m_Size++]) T(value);
+                }
+            } 
+            catch (...) 
+            {
+                clear();
+                ::operator delete(m_Arr, m_Capacity * sizeof(T));
+                throw;
+            }
+        }
+
+        Vector(const Vector<T>& other) 
+            : m_Capacity{other.m_Capacity}, m_Size{0}
+        {
+            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
+            try 
+            {
+                for (size_t i = 0; i < other.m_Size; ++i) 
+                {
+                    new(&m_Arr[m_Size++]) T(other.m_Arr[i]);
+                }
+            } 
+            catch (...) 
+            {
+                clear();
+                ::operator delete(m_Arr, m_Capacity * sizeof(T));
+                throw;
             }
         }
         Vector& operator= (const Vector<T>& other)
@@ -65,7 +95,7 @@ namespace impl
             return *this;
         }
         Vector(Vector<T>&& other) noexcept
-            : m_Arr(other.m_Arr), m_Capacity(other.m_Capacity), m_Size(other.m_Size)
+            : m_Arr{other.m_Arr}, m_Capacity{other.m_Capacity}, m_Size{other.m_Size}
         {
             other.m_Arr = nullptr;
             other.m_Capacity = 0;
