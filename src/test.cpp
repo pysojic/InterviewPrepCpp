@@ -54,10 +54,17 @@ int main()
     // impl::Vector<testClass> vec;
     // std::cout << vec.capacity() << std::endl;
 
-    impl::Vector<std::string> vec(10, "Hello");
+    impl::Vector<std::string> vec(5, "Hello");
     std::string str("I will get this");
     vec.print();
 
+    impl::Vector<std::string> vec2(vec);
+    vec2.print();
+    vec2.push_back("Fuck");
+
+    impl::Vector<std::string> vec3(std::move(vec2));
+    vec2.print();
+    vec3.print();
 
     vec.push_back("Hello");
     vec.push_back("The");

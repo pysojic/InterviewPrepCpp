@@ -12,7 +12,7 @@ namespace impl
         }
         Vector(size_t size) : m_Capacity{size}, m_Size{}
         {
-            m_Arr = (T*)::operator new(size * sizeof(T));
+            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
             for (size_t i = 0; i < size; ++i)
             {
                 new(&m_Arr[m_Size++]) T();
@@ -20,11 +20,67 @@ namespace impl
         }
         Vector(size_t size, const T& value) : m_Capacity{size}, m_Size{}
         {
-            m_Arr = (T*)::operator new(size * sizeof(T));
+            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
             for (size_t i = 0; i < size; ++i)
             {
                 new(&m_Arr[m_Size++]) T(value);
             }
+        }
+        Vector(const Vector<T>& other) : m_Capacity{other.m_Capacity}, m_Size{}
+        {
+            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
+
+            for (size_t i = 0; i < other.m_Size; ++i)
+            {
+                new(&m_Arr[m_Size++]) T(other.m_Arr[i]);
+            }
+        }
+        T& operator= (const Vector<T>& other)
+        {
+            if (this != &other)
+            {
+                this->~Vector();
+
+                m_Capacity = other.m_Capacity;
+                m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
+                
+                for (size_t i = 0; i < other.m_Size; ++i)
+                {
+                    new(&m_Arr[m_Size++]) T(other.m_Arr[i]);
+                }
+            }
+
+            return *this;
+        }
+        Vector(Vector<T>&& other) : m_Capacity{other.m_Capacity}, m_Size{}
+        {
+            m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
+
+            for (size_t i = 0; i < other.m_Size; ++i)
+            {
+                new(&m_Arr[m_Size++]) T(std::move(other.m_Arr[i]));
+            }
+
+            other.~Vector();
+        }
+        T& operator= (Vector<T>&& other)
+        {
+            if (this != &other)
+            {
+                this->~Vector();
+
+                m_Capacity = other.m_Capacity;
+                m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
+                
+                for (size_t i = 0; i < other.m_Size; ++i)
+                {
+                    new(&m_Arr[m_Size++]) T(std::move(other.m_Arr[i]));
+                }
+
+                other.~Vector();
+            }
+
+            return *this;
         }
         ~Vector() noexcept
         {
