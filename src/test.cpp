@@ -2,8 +2,8 @@
 #include <vector>
 #include <string>
 
-#include "array.hpp"
-#include "vector.hpp"
+#include "Array.hpp"
+#include "Vector.hpp"
 
 struct testClass
 {
@@ -51,10 +51,10 @@ struct testClass
 
 int main()
 {
-    // impl::Vector<testClass> vec;
+    // Vector<testClass> vec;
     // std::cout << vec.capacity() << std::endl;
 
-    impl::Vector<std::string> vecEmpty;
+    Vector<std::string> vecEmpty;
     vecEmpty.push_back("I");
     vecEmpty.push_back("need");
     vecEmpty.push_back("this");
@@ -63,15 +63,15 @@ int main()
 
     vecEmpty.print();
 
-    impl::Vector<std::string> vec(5, "Hello");
+    Vector<std::string> vec(5, "Hello");
     std::string str("I will get this");
     vec.print();
 
-    impl::Vector<std::string> vec2(vec);
+    Vector<std::string> vec2(vec);
     vec2.print();
-    vec2.push_back("Fuck");
+    vec2.push_back("Test");
 
-    impl::Vector<std::string> vec3(std::move(vec2));
+    Vector<std::string> vec3(std::move(vec2));
     vec2.print();
     vec3.print();
 
@@ -91,7 +91,7 @@ int main()
     std::cout << "Capacity: " << vec.capacity() << " Size: " << vec.size() << std::endl;
     vec.shrink_to_fit();
     std::cout << "Capacity: " << vec.capacity() << " Size: " << vec.size() << std::endl;
-
+    
     vec.resize(4);
     vec.print();
     std::cout << "Capacity: " << vec.capacity() << " Size: " << vec.size() << std::endl;
