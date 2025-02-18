@@ -1,8 +1,0 @@
-[
-{
-  "directory": "/Users/py/Documents/GitHub - Perso/implementations/build",
-  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -I\"/Users/py/Documents/GitHub - Perso/implementations/include\" -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk -O0 -g -Wall -Wextra -Wpedantic -march=native -o CMakeFiles/MyCppProject.dir/src/test.cpp.o -c \"/Users/py/Documents/GitHub - Perso/implementations/src/test.cpp\"",
-  "file": "/Users/py/Documents/GitHub - Perso/implementations/src/test.cpp",
-  "output": "CMakeFiles/MyCppProject.dir/src/test.cpp.o"
-}
-]
