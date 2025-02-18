@@ -88,7 +88,19 @@ int main()
 
     vec.print();
 
-    vec.clear();
+    std::cout << "Capacity: " << vec.capacity() << " Size: " << vec.size() << std::endl;
+    vec.shrink_to_fit();
+    std::cout << "Capacity: " << vec.capacity() << " Size: " << vec.size() << std::endl;
+
+    vec.resize(4);
+    vec.print();
+    std::cout << "Capacity: " << vec.capacity() << " Size: " << vec.size() << std::endl;
+    vec.resize(10);
+    vec.print();
+    std::cout << "Capacity: " << vec.capacity() << " Size: " << vec.size() << std::endl;
+    vec.resize(15);
+    vec.print();
+    std::cout << "Capacity: " << vec.capacity() << " Size: " << vec.size() << std::endl;
 
     // testClass test(7,9);
     // vec.print();
