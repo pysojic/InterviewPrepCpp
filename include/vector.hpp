@@ -211,7 +211,8 @@ public:
         {
             for (size_t i = m_Size - 1; i > newSize - 1; --i)
             {
-                m_Arr[i].~T();
+                //m_Arr[i].~T();
+                std::destroy_at(&m_Arr[i]);
             }
         }
 
