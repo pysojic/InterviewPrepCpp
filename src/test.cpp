@@ -62,9 +62,9 @@ int main()
     vecEmpty.push_back("work");
 
     vecEmpty.print();
+    std::string str{"Test"};
 
     Vector<std::string> vec(5, "Hello");
-    std::string str("I will get this");
     vec.print();
 
     Vector<std::string> vec2(vec);
@@ -72,8 +72,13 @@ int main()
     vec2.push_back("Test");
 
     Vector<std::string> vec3(std::move(vec2));
-    vec2.print();
+    std::cout << "vec2 after move" << std::endl; vec2.print();
+    std::cout << "vec3 after move3" << std::endl;
     vec3.print();
+
+    vec2 = std::move(vec3);
+    std::cout << "vec2 after move2" << std::endl; vec2.print();
+    std::cout << "vec2 after move3" << std::endl; vec3.print();
 
     vec.push_back("Hello");
     vec.push_back("The");

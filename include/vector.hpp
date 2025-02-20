@@ -81,7 +81,7 @@ public:
             ::operator delete(m_Arr, m_Capacity * sizeof(T));
 
             m_Capacity = other.m_Capacity;
-            m_Size = 0;
+            // m_Size = 0; // Not really needed since clear() was called
             m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
             
             for (size_t i = 0; i < other.m_Size; ++i)
@@ -94,12 +94,9 @@ public:
     }
 
     Vector(Vector<T>&& other) noexcept
-        : m_Arr{other.m_Arr}, m_Capacity{other.m_Capacity}, m_Size{other.m_Size}
-    {
-        other.m_Arr = nullptr;
-        other.m_Capacity = 0;
-        other.m_Size = 0;
-    }
+        : m_Arr{std::exchange(other.m_Arr, nullptr)}, m_Capacity{std::exchange(other.m_Capacity, 0)}, 
+        m_Size{std::exchange(other.m_Size, 0)}
+    {}
 
     Vector<T>& operator=(Vector<T>&& other) noexcept
     {
@@ -111,14 +108,9 @@ public:
             ::operator delete(m_Arr, m_Capacity * sizeof(T));
 
             // Steal resources
-            m_Arr = other.m_Arr;
-            m_Capacity = other.m_Capacity;
-            m_Size = other.m_Size;
-
-            // Leave other in a safe state
-            other.m_Arr = nullptr;
-            other.m_Capacity = 0;
-            other.m_Size = 0;
+            m_Arr = std::exchange(other.m_Arr, nullptr);
+            m_Capacity = std::exchange(other.m_Capacity, 0);
+            m_Size = std::exchange(other.m_Size, 0);
         }
         return *this;
     }
