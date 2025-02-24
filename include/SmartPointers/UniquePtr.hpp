@@ -41,7 +41,7 @@ public:
         // releases control over pointer
         return std::exchange(m_Data, nullptr);
     }; 
-    
+
     void reset(T* replacement){
         // delete one currently used by shared ptr, takes new one
         if (replacement != m_Data)
@@ -72,7 +72,7 @@ public:
     // but still allows usage in conditional expressions where a bool is required by context
     explicit operator bool()
     {
-        return get() != nullptr;
+        return m_Data != nullptr;
     }
 
 private:
@@ -87,3 +87,4 @@ UniquePtr<T> make_unique(Args&&... args)
     // in std::forward, the ... after means to unpack the params
     return UniquePtr<T>(new T{std::forward<Args>(args)...});
 };
+
