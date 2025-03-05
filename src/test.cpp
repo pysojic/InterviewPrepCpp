@@ -6,6 +6,7 @@
 #include "Containers/Array.hpp"
 #include "Containers/Vector.hpp"
 #include "SmartPointers/SharedPtr.hpp"
+#include "Containers/List.hpp"
 
 struct testClass
 {
@@ -53,9 +54,11 @@ struct testClass
 
 int main()
 {
-    SharedPtr<testClass> ptr;
-    ptr.reset(new testClass(2, 8));
-    SharedPtr<testClass> ptr2{ new testClass() };
-    SharedPtr<testClass> ptr3(ptr2);
-    std::shared_ptr<int> sp;
+    List<int> list1;
+    list1.push_back(1);
+    list1.push_front(2);
+    list1.print();
+
+    List<std::string> list2{"Hello", "The", "World"};
+    list2.print();
 }

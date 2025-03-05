@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <initializer_list>
 
 template <typename T>
 struct Node
@@ -31,6 +32,7 @@ struct Node
 template <typename T>
 class List
 {   
+public:
     List()
         : m_Head{nullptr}, m_Tail{nullptr}, m_Size{}
     {}
@@ -39,11 +41,11 @@ class List
     {
         if (size > 1)
         {
-            m_Head = new Node{};
-            Node* curr = m_Head;
-            for (size_t i = 1; i < m_Size; ++i)
+            m_Head = new Node<T>{};
+            Node<T>* curr = m_Head;
+            while(curr)
             {
-                Node* newNode = new Node{};
+                Node<T>* newNode = new Node<T>{};
                 curr->m_Next = newNode;
                 newNode->m_Prev = curr;
                 curr = newNode;
@@ -52,7 +54,7 @@ class List
         }
         else if (size == 1)
         {
-            m_Head = new Node{};
+            m_Head = new Node<T>{};
             m_Tail = m_Head;
         }
         else
@@ -61,18 +63,66 @@ class List
             m_Tail = nullptr;
         }
     }
+    List(size_t size, const T& val)
+        : m_Size{size}
+    {
+        if (size > 1)
+        {
+            Node<T>* m_Head = new T{val};
+            Node<T>* curr = m_Head;
+
+            while(curr)
+            {
+                Node<T>* next = new Node{val};
+                curr->m_Next = next;
+                next->m_Prev = curr;
+                curr = next;
+            }
+            m_Tail = curr;
+        }
+        else if (size == 1)
+        {
+            Node<T>* m_Head = new Node{val};
+            m_Tail = m_Head;
+        }
+        else
+        {
+            m_Head = nullptr;
+            m_Tail = nullptr;
+        }
+    }
+    List(std::initializer_list<T> list)
+        : m_Size{list.size()}
+    {
+        if (m_Size)
+        {
+            auto it = list.begin();
+            m_Head = new Node<T>{*it};
+            Node<T>* curr = m_Head;
+            ++it;
+            while(it != list.end())
+            {
+                Node<T>* next = new Node<T>{*it};
+                curr->m_Next = next;
+                next->m_Prev = curr;
+                curr = next;
+                ++it;
+            }
+            m_Tail = curr;
+        }
+    }
     List(const List& other)
         : m_Size{other.m_Size}
     {
         // Check that the other list is not empty
         if (other.m_Head)
         {
-            m_Head = new Node{other.m_Head->m_Data};
-            Node* curr = m_Head;
-            Node* otherCurr = other.m_Head->m_Next;
+            m_Head = new Node<T>{other.m_Head->m_Data};
+            Node<T>* curr = m_Head;
+            Node<T>* otherCurr = other.m_Head->m_Next;
             while(otherCurr)
             {
-                Node* next = new Node{otherCurr->m_Data};
+                Node<T>* next = new Node<T>{otherCurr->m_Data};
                 curr->m_Next = next;
                 next->m_Prev = curr;
                 curr = next;
@@ -93,12 +143,12 @@ class List
             // Check that the other list is not empty
             if (other.m_Head)
             {
-                m_Head = new Node{other.m_Head->m_Data};
-                Node* curr = m_Head;
-                Node* otherCurr = other.m_Head->m_Next;
+                m_Head = new Node<T>{other.m_Head->m_Data};
+                Node<T>* curr = m_Head;
+                Node<T>* otherCurr = other.m_Head->m_Next;
                 while(otherCurr)
                 {
-                    Node* next = new Node{otherCurr->m_Data};
+                    Node<T>* next = new Node<T>{otherCurr->m_Data};
                     curr->m_Next = next;
                     next->m_Prev = curr;
                     curr = next;
@@ -135,14 +185,14 @@ class List
     {
         if (m_Head)
         {
-            Node* oldHead = m_Head;
-            m_Head = new Node{elem};
+            Node<T>* oldHead = m_Head;
+            m_Head = new Node<T>{elem};
             oldHead->m_Prev = m_Head;
             m_Head->m_Next = oldHead;
         }
         else
         {
-            m_Head = new Node{elem};
+            m_Head = new Node<T>{elem};
             m_Tail = m_Head;
         }
         ++m_Size;
@@ -152,14 +202,14 @@ class List
     {
         if (m_Head)
         {
-            Node* oldHead = m_Head;
-            m_Head = new Node{std::move(elem)};
+            Node<T>* oldHead = m_Head;
+            m_Head = new Node<T>{std::move(elem)};
             oldHead->m_Prev = m_Head;
             m_Head->m_Next = oldHead;
         }
         else
         {
-            m_Head = new Node{std::move(elem)};
+            m_Head = new Node<T>{std::move(elem)};
             m_Tail = m_Head;
         }
         ++m_Size;
@@ -170,14 +220,14 @@ class List
     {
         if (m_Head)
         {
-            Node* oldHead = m_Head;
-            m_Head = new Node{std::forward<Args>(args)...};
+            Node<T>* oldHead = m_Head;
+            m_Head = new Node<T>{std::forward<Args>(args)...};
             oldHead->m_Prev = m_Head;
             m_Head->m_Next = oldHead;
         }
         else
         {
-            m_Head = new Node{std::forward<Args>(args)...};
+            m_Head = new Node<T>{std::forward<Args>(args)...};
             m_Tail = m_Head;
         }
         ++m_Size;
@@ -187,14 +237,14 @@ class List
     {
         if (m_Tail)
         {
-            Node* oldTail = m_Tail;
-            m_Tail = new Node{elem};
+            Node<T>* oldTail = m_Tail;
+            m_Tail = new Node<T>{elem};
             oldTail->m_Next = m_Tail;
             m_Tail->m_Prev = oldTail;
         }
         else
         {
-            m_Head = new Node{elem};
+            m_Head = new Node<T>{elem};
             m_Tail = m_Head;
         }
         ++m_Size;
@@ -204,14 +254,14 @@ class List
     {
         if (m_Tail)
         {
-            Node* oldTail = m_Tail;
-            m_Tail = new Node{std::move(elem)};
+            Node<T>* oldTail = m_Tail;
+            m_Tail = new Node<T>{std::move(elem)};
             oldTail->m_Next = m_Tail;
             m_Tail->m_Prev = oldTail;
         }
         else
         {
-            m_Head = new Node{std::move(elem)};
+            m_Head = new Node<T>{std::move(elem)};
             m_Tail = m_Head;
         }
         ++m_Size;
@@ -222,14 +272,14 @@ class List
     {
         if (m_Head)
         {
-            Node* oldTail = m_Tail;
-            m_Tail = new Node{std::forward<Args>(args)...};
+            Node<T>* oldTail = m_Tail;
+            m_Tail = new Node<T>{std::forward<Args>(args)...};
             oldTail->m_Next = m_Tail;
             m_Tail->m_Prev = oldTail;
         }
         else
         {
-            m_Tail = new Node{std::forward<Args>(args)...};
+            m_Tail = new Node<T>{std::forward<Args>(args)...};
             m_Head = m_Tail;
         }
         ++m_Size;
@@ -240,7 +290,7 @@ class List
         // Check if the list has more than 1 element
         if (m_Head->m_Next)
         {
-            Node* oldHead = m_Head;
+            Node<T>* oldHead = m_Head;
             m_Head = oldHead->m_Next;
             m_Head->m_Prev = nullptr;
             delete oldHead;
@@ -259,7 +309,7 @@ class List
     {
         if (m_Tail->m_Prev)
         {
-            Node* oldTail = m_Tail;
+            Node<T>* oldTail = m_Tail;
             m_Tail = oldTail->m_Prev;
             m_Tail->m_Next = nullptr;
             delete oldTail;
@@ -275,14 +325,14 @@ class List
     void reverse_list()
     {
         m_Tail = m_Head;
-        Node* current = m_Head;
-        Node* temp = nullptr;
+        Node<T>* current = m_Head;
+        Node<T>* temp = nullptr;
         while (current)
         {
             // Swap pointers
             std::swap(current->m_Prev, current->m_Next);
             temp = current;
-            // Move to next node (which is the old previous)
+            // Move to next node<T> (which is the old previous)
             current = current->m_Prev;
         }
         // After the loop, temp points to the new head
@@ -292,10 +342,10 @@ class List
     void clear()
     {
  
-        Node* curr = m_Head;
+        Node<T>* curr = m_Head;
         while(curr)
         {
-            Node* next = curr->m_Next;
+            Node<T>* next = curr->m_Next;
             delete curr;
             curr = next;
         }
@@ -311,6 +361,7 @@ class List
     {
         return m_Tail->m_Data;
     }
+
     const T& front() const noexcept
     {
         return m_Head->m_Data;
@@ -323,13 +374,23 @@ class List
     {
         return m_Head == nullptr ? true : false;
     }
-    size_t sizeof() const noexcept
+    size_t size() const noexcept
     {
         return m_Size;
     }
+    void print() const
+    {
+        Node<T>* curr = m_Head;
+        while(curr)
+        {
+            std::cout << curr->m_Data << ',';
+            curr = curr->m_Next;
+        }
+        std::cout << std::endl;
+    }
     
 private:
-    Node* m_Head = nullptr;
-    Node* m_Tail = nullptr;
+    Node<T>* m_Head = nullptr;
+    Node<T>* m_Tail = nullptr;
     size_t m_Size{};
 };
