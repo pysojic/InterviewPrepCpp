@@ -3,6 +3,13 @@
 template <typename T>
 struct Node
 {
+    Node(const T& val)
+        : m_Data{val}, m_Prev{nullptr}, m_Next{nullptr}
+    {}
+    Node(T&& val)
+        : m_Data{std::move(val)}, m_Prev{nullptr}, m_Next{nullptr}
+    {}
+
     T m_Data{};
     Node* m_Prev = nullptr;
     Node* m_Next = nullptr;
@@ -41,17 +48,84 @@ class List
             m_Tail = nullptr;
         }
     }
-    ~List();
-
-    void push_front() 
+    List(const List& other)
+        : m_Size{other.m_Size}
     {
-        m_Head->m_Prev = nullptr;
-
+        
     }
-    void push_back()
+    ~List() noexcept
     {
-
+        clear();
     }
+
+    void push_front(const T& elem) 
+    {
+        if (m_Head)
+        {
+            Node* oldHead = m_Head;
+            m_Head = new Node{elem};
+            oldHead->m_Prev = m_Head;
+            m_Head->m_Next = oldHead;
+        }
+        else
+        {
+            m_Head = new Node{elem};
+            m_Tail = m_Head;
+        }
+        ++m_Size;
+    }
+
+    void push_front(T&& elem) 
+    {
+        if (m_Head)
+        {
+            Node* oldHead = m_Head;
+            m_Head = new Node{std::move(elem)};
+            oldHead->m_Prev = m_Head;
+            m_Head->m_Next = oldHead;
+        }
+        else
+        {
+            m_Head = new Node{std::move(elem)};
+            m_Tail = m_Head;
+        }
+        ++m_Size;
+    }
+
+    void push_back(const T& elem)
+    {
+        if (m_Tail)
+        {
+            Node* oldTail = m_Tail;
+            m_Tail = new Node{elem};
+            oldTail->m_Next = m_Tail;
+            m_Tail->m_Prev = oldTail;
+        }
+        else
+        {
+            m_Head = new Node{elem};
+            m_Tail = m_Head;
+        }
+        ++m_Size;
+    }
+
+    void push_back(T&& elem)
+    {
+        if (m_Tail)
+        {
+            Node* oldTail = m_Tail;
+            m_Tail = new Node{std::move(elem)};
+            oldTail->m_Next = m_Tail;
+            m_Tail->m_Prev = oldTail;
+        }
+        else
+        {
+            m_Head = new Node{std::move(elem)};
+            m_Tail = m_Head;
+        }
+        ++m_Size;
+    }
+
     void pop_front()
     {
         // Check if the list has more than 1 element
@@ -71,6 +145,7 @@ class List
         --m_Size;
         // Note: handling calling pop_back/pop_front on an empty list is left to the user, this is UB in the current impl
     }
+
     void pop_back()
     {
         if (m_Tail->m_Prev)
@@ -86,6 +161,20 @@ class List
         m_Head = nullptr;
         m_Tail = nullptr;
         --m_Size;
+    }
+
+    void clear()
+    {
+ 
+        Node* curr = m_Head;
+        while(curr)
+        {
+            Node* next = curr->m_Next;
+            delete curr;
+            curr = next;
+        }
+        m_Head = m_Tail = nullptr;
+        m_Size = 0;
     }
     
 private:
