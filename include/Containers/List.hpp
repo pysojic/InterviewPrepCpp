@@ -9,6 +9,9 @@ struct Node
     Node(T&& val)
         : m_Data{std::move(val)}, m_Prev{nullptr}, m_Next{nullptr}
     {}
+    Node(const T& other)
+        : m_Data{other.m_Data}
+    {}
     Node(Node&& other) noexcept
     {
         m_Data = std::move(other.m_Data);
@@ -227,6 +230,23 @@ class List
         m_Head = nullptr;
         m_Tail = nullptr;
         --m_Size;
+    }
+
+    void reverse_list()
+    {
+        m_Tail = m_Head;
+        Node* current = m_Head;
+        Node* temp = nullptr;
+        while (current)
+        {
+            // Swap pointers
+            std::swap(current->m_Prev, current->m_Next);
+            temp = current;
+            // Move to next node (which is the old previous)
+            current = current->m_Prev;
+        }
+        // After the loop, temp points to the new head
+        m_Head = temp;
     }
 
     void clear()
