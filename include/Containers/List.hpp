@@ -2,36 +2,36 @@
 #include <initializer_list>
 
 template <typename T>
-struct Node
-{
-    Node(const T& val) noexcept
-        : m_Data{val}, m_Prev{nullptr}, m_Next{nullptr}
-    {}
-    Node(T&& val) noexcept
-        : m_Data{std::move(val)}, m_Prev{nullptr}, m_Next{nullptr}
-    {}
-    Node(const Node& other)
-        : m_Data{other.m_Data}
-    {}
-    template<typename... Args>
-    Node(Args&&... args) noexcept
-        : m_Data{std::forward<Args>(args)...}
-    {}
-    Node(Node&& other) noexcept
-    {
-        m_Data = std::move(other.m_Data);
-        m_Prev = std::exchange(other.m_Prev, nullptr);
-        m_Next = std::exchange(other.m_Next, nullptr);
-    }
-
-    T m_Data{};
-    Node* m_Prev = nullptr;
-    Node* m_Next = nullptr;
-};
-
-template <typename T>
 class List
 {   
+    template <typename K>
+    struct Node
+    {
+        Node(const K& val) noexcept
+            : m_Data{val}, m_Prev{nullptr}, m_Next{nullptr}
+        {}
+        Node(K&& val) noexcept
+            : m_Data{std::move(val)}, m_Prev{nullptr}, m_Next{nullptr}
+        {}
+        Node(const Node& other)
+            : m_Data{other.m_Data}
+        {}
+        template<typename... Args>
+        Node(Args&&... args) noexcept
+            : m_Data{std::forward<Args>(args)...}
+        {}
+        Node(Node&& other) noexcept
+        {
+            m_Data = std::move(other.m_Data);
+            m_Prev = std::exchange(other.m_Prev, nullptr);
+            m_Next = std::exchange(other.m_Next, nullptr);
+        }
+
+        K m_Data{};
+        Node* m_Prev = nullptr;
+        Node* m_Next = nullptr;
+    };
+
 public:
     List()
         : m_Head{nullptr}, m_Tail{nullptr}, m_Size{}

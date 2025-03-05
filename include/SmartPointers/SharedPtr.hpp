@@ -6,7 +6,7 @@ template <typename T>
 class SharedPtr
 {
     template <typename K>
-    struct ControlBlock
+    class ControlBlock
     {
         friend class SharedPtr;
         ControlBlock() 

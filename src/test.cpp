@@ -54,12 +54,9 @@ struct testClass
 
 int main()
 {
-    SharedPtr<std::string> sp = new std::string("Hello");
-    std::cout << *sp << std::endl;
-    std::cout << sp->empty() << std::endl;
-
-    sp.reset(new std::string("TEst"));
-    std::cout << *sp << std::endl;
-    SharedPtr<std::string> sp2{std::move(sp)};
-    std::cout << *sp2 << std::endl;
+    List<std::string> list{"Hello", "The"};
+    list.print();
+    list.push_front("I am");
+    list.pop_back();
+    list.print();
 }

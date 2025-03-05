@@ -1,5 +1,3 @@
-// g++-14 -std=c++20 -I include -g -Wall -Wextra -Wpedantic src/*.cpp -o out
-
 #include <iostream>
 
 template <typename T, std::size_t Size>
