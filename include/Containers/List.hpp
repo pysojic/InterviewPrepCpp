@@ -9,6 +9,12 @@ struct Node
     Node(T&& val)
         : m_Data{std::move(val)}, m_Prev{nullptr}, m_Next{nullptr}
     {}
+    Node(Node&& other) noexcept
+    {
+        m_Data = std::move(other.m_Data);
+        m_Prev = std::exchange(other.m_Prev, nullptr);
+        m_Next = std::exchange(other.m_Next, nullptr);
+    }
 
     T m_Data{};
     Node* m_Prev = nullptr;
@@ -51,7 +57,67 @@ class List
     List(const List& other)
         : m_Size{other.m_Size}
     {
-        
+        // Check that the other list is not empty
+        if (other.m_Head)
+        {
+            m_Head = new Node{other.m_Head->m_Data};
+            Node* curr = m_Head;
+            Node* otherCurr = other.m_Head->m_Next;
+            while(otherCurr)
+            {
+                Node* next = new Node{otherCurr->m_Data};
+                curr->m_Next = next;
+                next->m_Prev = curr;
+                curr = next;
+                otherCurr = otherCurr->m_Next;
+            }
+            curr->m_Next = nullptr;
+            m_Tail = curr;
+        }
+    }
+    List& operator=(const List& other)
+    {
+        if (this != &other)
+        {
+            if (m_Head)
+            {
+                clear();
+            }
+            // Check that the other list is not empty
+            if (other.m_Head)
+            {
+                m_Head = new Node{other.m_Head->m_Data};
+                Node* curr = m_Head;
+                Node* otherCurr = other.m_Head->m_Next;
+                while(otherCurr)
+                {
+                    Node* next = new Node{otherCurr->m_Data};
+                    curr->m_Next = next;
+                    next->m_Prev = curr;
+                    curr = next;
+                    otherCurr = otherCurr->m_Next;
+                }
+                curr->m_Next = nullptr;
+                m_Tail = curr;
+            }
+        }
+        return *this;
+    }
+    List(List&& other) noexcept
+        : m_Head{std::exchange(other.m_Head, nullptr)}, m_Tail{std::exchange(other.m_Tail, nullptr)}, 
+        m_Size{std::exchange(other.m_Size, 0)}
+    {
+    }
+    List& operator= (List&& other) noexcept
+    {
+        if (this != &other)
+        {
+            clear();
+            m_Head = std::exchange(other.m_Head, nullptr);
+            m_Tail = std::exchange(other.m_Tail, nullptr);
+            m_Size = std::exchange(other.m_Size, 0);
+        }
+        return *this;
     }
     ~List() noexcept
     {
@@ -178,7 +244,7 @@ class List
     }
     
 private:
-    Node* m_Head;
-    Node* m_Tail;
-    size_t m_Size;
+    Node* m_Head = nullptr;
+    Node* m_Tail = nullptr;
+    size_t m_Size{};
 };
