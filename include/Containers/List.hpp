@@ -4,17 +4,17 @@
 template <typename T>
 struct Node
 {
-    Node(const T& val)
+    Node(const T& val) noexcept
         : m_Data{val}, m_Prev{nullptr}, m_Next{nullptr}
     {}
-    Node(T&& val)
+    Node(T&& val) noexcept
         : m_Data{std::move(val)}, m_Prev{nullptr}, m_Next{nullptr}
     {}
     Node(const Node& other)
         : m_Data{other.m_Data}
     {}
     template<typename... Args>
-    Node(Args&&... args)
+    Node(Args&&... args) noexcept
         : m_Data{std::forward<Args>(args)...}
     {}
     Node(Node&& other) noexcept
