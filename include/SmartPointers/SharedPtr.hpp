@@ -3,29 +3,32 @@
 #include <atomic>
 
 template <typename T>
-struct ControlBlock
-{
-    ControlBlock() : m_Data{nullptr}, m_RefCount{}, m_WeakRefCount{}
-    {}
-    ControlBlock(T* data, size_t refCount, size_t weakRefCount) : m_Data{data}, m_RefCount{refCount}, m_WeakRefCount{weakRefCount}
-    {}
-    ~ControlBlock() noexcept { delete m_Data; }
-
-    T* m_Data;
-    std::atomic_size_t m_RefCount;
-    std::atomic_size_t m_WeakRefCount;
-};
-
-template <typename T>
 class SharedPtr
 {
+    template <typename K>
+    struct ControlBlock
+    {
+        friend class SharedPtr;
+        ControlBlock() 
+            : m_Data{nullptr}, m_RefCount{}, m_WeakRefCount{}
+        {}
+        ControlBlock(K* data, size_t refCount, size_t weakRefCount) 
+            : m_Data{data}, m_RefCount{refCount}, m_WeakRefCount{weakRefCount}
+        {}
+        ~ControlBlock() noexcept { delete m_Data; }
+
+        T* m_Data;
+        std::atomic_size_t m_RefCount;
+        std::atomic_size_t m_WeakRefCount;
+    };
+
 public:
     SharedPtr() 
         : m_ControlBlock{ nullptr }
     {}
 
     SharedPtr(T* ptr) 
-        : m_ControlBlock( new ControlBlock(ptr, 1, 0) )
+        : m_ControlBlock( new ControlBlock<T>(ptr, 1, 0) )
     {}
 
     SharedPtr(const SharedPtr& other) 
@@ -81,7 +84,7 @@ public:
     void reset(T* other_ptr) 
     { 
         release();
-        m_ControlBlock = new ControlBlock(other_ptr, 1, 0);
+        m_ControlBlock = new ControlBlock<T>(other_ptr, 1, 0);
     }
     void swap(SharedPtr& other)
     {
