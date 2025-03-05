@@ -1,3 +1,5 @@
+#pragma once
+
 // UniquePtr
 #include <utility>
 #include <string>

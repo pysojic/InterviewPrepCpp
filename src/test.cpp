@@ -59,4 +59,6 @@ int main()
     list.push_front("I am");
     list.pop_back();
     list.print();
+    list.emplace_back(list.front().begin(), list.front().end() - 1 );
+    list.print();
 }
