@@ -9,8 +9,12 @@ struct Node
     Node(T&& val)
         : m_Data{std::move(val)}, m_Prev{nullptr}, m_Next{nullptr}
     {}
-    Node(const T& other)
+    Node(const Node& other)
         : m_Data{other.m_Data}
+    {}
+    template<typename... Args>
+    Node(Args&&... args)
+        : m_Data{std::forward<Args>(args)...}
     {}
     Node(Node&& other) noexcept
     {
@@ -161,6 +165,24 @@ class List
         ++m_Size;
     }
 
+    template <typename... Args>
+    void emplace_front(Args&&... args)
+    {
+        if (m_Head)
+        {
+            Node* oldHead = m_Head;
+            m_Head = new Node{std::forward<Args>(args)...};
+            oldHead->m_Prev = m_Head;
+            m_Head->m_Next = oldHead;
+        }
+        else
+        {
+            m_Head = new Node{std::forward<Args>(args)...};
+            m_Tail = m_Head;
+        }
+        ++m_Size;
+    }
+
     void push_back(const T& elem)
     {
         if (m_Tail)
@@ -191,6 +213,24 @@ class List
         {
             m_Head = new Node{std::move(elem)};
             m_Tail = m_Head;
+        }
+        ++m_Size;
+    }
+
+    template <typename... Args>
+    void emplace_back(Args&&... args)
+    {
+        if (m_Head)
+        {
+            Node* oldTail = m_Tail;
+            m_Tail = new Node{std::forward<Args>(args)...};
+            oldTail->m_Next = m_Tail;
+            m_Tail->m_Prev = oldTail;
+        }
+        else
+        {
+            m_Tail = new Node{std::forward<Args>(args)...};
+            m_Head = m_Tail;
         }
         ++m_Size;
     }
@@ -261,6 +301,31 @@ class List
         }
         m_Head = m_Tail = nullptr;
         m_Size = 0;
+    }
+
+    T& front() noexcept
+    {
+        return m_Head->m_Data;
+    }
+    T& back() noexcept
+    {
+        return m_Tail->m_Data;
+    }
+    const T& front() const noexcept
+    {
+        return m_Head->m_Data;
+    }
+    const T& back() const noexcept
+    {
+        return m_Tail->m_Data;
+    }
+    bool empty() const noexcept
+    {
+        return m_Head == nullptr ? true : false;
+    }
+    size_t sizeof() const noexcept
+    {
+        return m_Size;
     }
     
 private:
