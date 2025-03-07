@@ -16,11 +16,11 @@ class List
             : m_Data{std::move(val)}, m_Prev{nullptr}, m_Next{nullptr}
         {}
         Node(const Node& other)
-            : m_Data{other.m_Data}
+            : m_Data{other.m_Data}, m_Prev{nullptr}, m_Next{nullptr}
         {}
         template<typename... Args>
-        Node(Args&&... args) noexcept
-            : m_Data{std::forward<Args>(args)...}
+        Node(Args&&... args) noexcept // Contruct the data in-place by passing the object's contructor args
+            : m_Data{std::forward<Args>(args)...}, m_Prev{nullptr}, m_Next{nullptr}
         {}
         Node(Node&& other) noexcept
         {
