@@ -54,6 +54,9 @@ struct testClass
 
 int main()
 {
+    pysojic::SharedPtr<testClass> ptr = pysojic::make_shared<testClass>(3, 4);
+    ptr->print();
+
     // List<int> l1{1, 2, 4, 5, 6};
     // List<int> l2{0, 3, 4, 5, 9, 11, 12, 29};
 
