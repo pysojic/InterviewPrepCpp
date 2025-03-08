@@ -54,13 +54,13 @@ struct testClass
 
 int main()
 {
-    List<int> l1{1, 2, 4, 5, 6};
-    List<int> l2{0, 3, 4, 5, 9, 11, 12, 29};
+    // List<int> l1{1, 2, 4, 5, 6};
+    // List<int> l2{0, 3, 4, 5, 9, 11, 12, 29};
 
-    l1.print();
-    l2.print();
+    // l1.print();
+    // l2.print();
 
-    l1.merge(l2);
-    l1.print();
-    std::cout << l1.back();
+    // l1.merge(l2);
+    // l1.print();
+    // std::cout << l1.back();
 }
