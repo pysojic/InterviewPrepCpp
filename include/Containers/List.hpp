@@ -341,6 +341,60 @@ public:
         m_Head = temp;
     }
 
+    void merge(List& other)
+    {
+        if (this != &other)
+        {
+            Node<T>* dummy = new Node<T>{};
+            Node<T>* node = dummy;
+            Node<T>* head1 = m_Head;
+            Node<T>* head2 = other.m_Head;
+            
+            while(head1 && head2)
+            {
+                if (head1->m_Data < head2->m_Data)
+                {
+                    node->m_Next = head1;
+                    head1->m_Prev = node;
+                    head1 = head1->m_Next;
+                }
+                else 
+                {
+                    node->m_Next = head2;
+                    head2->m_Prev = node;
+                    head2 = head2->m_Next;
+                }
+                node = node->m_Next;
+            }
+
+            if (head1)
+            {
+                node->m_Next = head1;
+                head1->m_Prev = node;
+            }
+            else
+            {
+                node->m_Next = head2;
+                head2->m_Prev = node;
+            }
+
+            // Set the new head and tail
+            m_Head = dummy->m_Next;
+            if(m_Head)  // if merged list is non-empty
+                m_Head->m_Prev = nullptr;
+            
+            // Find tail (or keep node as tail if list is non-empty)
+            while (node->m_Next)
+            {
+                node = node->m_Next;
+            }
+            m_Tail = node;
+            
+            delete dummy;
+            other.reset();
+        }
+    }
+
     void clear()
     {
  
@@ -389,6 +443,13 @@ public:
             curr = curr->m_Next;
         }
         std::cout << std::endl;
+    }
+private:
+    void reset()
+    {
+        m_Head = nullptr;
+        m_Tail = nullptr;
+        m_Size = 0;
     }
     
 private:

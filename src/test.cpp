@@ -54,11 +54,13 @@ struct testClass
 
 int main()
 {
-    List<std::string> list{"Hello", "The"};
-    list.print();
-    list.push_front("I am");
-    list.pop_back();
-    list.print();
-    list.emplace_back(list.front().begin(), list.front().end() - 1 );
-    list.print();
+    List<int> l1{1, 2, 4, 5, 6};
+    List<int> l2{0, 3, 4, 5, 9, 11, 12, 29};
+
+    l1.print();
+    l2.print();
+
+    l1.merge(l2);
+    l1.print();
+    std::cout << l1.back();
 }
