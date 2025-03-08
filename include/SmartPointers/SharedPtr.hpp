@@ -13,12 +13,13 @@ namespace pysojic
         class ControlBlock
         {
             friend class SharedPtr;
-        public:
+            template<typename U, typename... Args>
+            friend SharedPtr<U> make_shared(Args&&... args);
+
             ControlBlock();
-            ControlBlock(K* data);
+            explicit ControlBlock(K* data);
             ~ControlBlock() noexcept;
 
-        private:
             T* m_Data;
             std::atomic_size_t m_RefCount;
             std::atomic_size_t m_WeakRefCount;
@@ -26,7 +27,7 @@ namespace pysojic
 
     public:
         SharedPtr() ;
-        SharedPtr(T* ptr) ;
+        explicit SharedPtr(T* ptr) ;
         SharedPtr(const SharedPtr& other);
         SharedPtr& operator =(const SharedPtr& other);
         SharedPtr(SharedPtr&& other) noexcept;
@@ -48,7 +49,7 @@ namespace pysojic
         friend SharedPtr<K> make_shared(Args&&... args);
 
     private:
-        SharedPtr(ControlBlock<T>* cb);
+        explicit SharedPtr(ControlBlock<T>* cb);
 
     private:
         ControlBlock<T>* m_ControlBlock;
@@ -165,19 +166,22 @@ namespace pysojic
     template<typename T, typename... Args>
     SharedPtr<T> make_shared(Args&&... args)
     {
+        using ControlBlock = typename SharedPtr<T>::template ControlBlock<T>;
         // Allocate a contiguous block for T and its ControlBlock.
-        T* block = static_cast<T*>(::operator new(sizeof(T) + sizeof(typename SharedPtr<T>::template ControlBlock<T>)));
+        T* block = static_cast<T*>(::operator new(sizeof(T) + sizeof(ControlBlock)));
         
         // Construct T at the beginning of the block.
         std::construct_at(block, std::forward<Args>(args)...);
         
         // Calculate the address for the ControlBlock.
-        auto* cbMem = reinterpret_cast<typename SharedPtr<T>::template ControlBlock<T>*>(
+        auto* cbMem = reinterpret_cast<ControlBlock*>(
             reinterpret_cast<char*>(block) + sizeof(T)
         );
         
-        // Construct the ControlBlock in-place, passing the pointer to the managed object.
-        std::construct_at(cbMem, block);
+        // Construct the ControlBlock
+        // Need to use placement new instead of std::construct_at since that function does not have access to
+        // the private constructors of the ControlBlock class.
+        ::new(cbMem) ControlBlock(block);
         
         return SharedPtr<T>(cbMem);
 
