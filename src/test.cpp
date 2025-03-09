@@ -56,7 +56,7 @@ struct testClass
 int main()
 {
     pysojic::ForwardList<int> l1{1,2,3,4,5};
-    pysojic::ForwardList<int> l2(l1);
+    pysojic::ForwardList<int> l2(std::move(l1));
     l1.print();
     l2.print();
     l2.clear();

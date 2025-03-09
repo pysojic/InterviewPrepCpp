@@ -172,7 +172,7 @@ namespace pysojic
 
     template <typename T>
     ForwardList<T>::ForwardList(ForwardList&& other) noexcept
-        : m_Head{std::exchange(other.m_Head, nullptr)}, m_Tail{std::exchange(other.Tail, nullptr)}, 
+        : m_Head{std::exchange(other.m_Head, nullptr)}, m_Tail{std::exchange(other.m_Tail, nullptr)}, 
         m_Size{std::exchange(other.m_Size, 0)}
     {}
 
