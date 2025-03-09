@@ -42,8 +42,8 @@ namespace pysojic
         T& back();
         void clear();
 
-        const T& front() const {return m_Head->m_Data}
-        const T& back() const {return m_Tail->m_Data}
+        const T& front() const { return m_Head->m_Data; }
+        const T& back() const { return m_Tail->m_Data; }
         size_t size() const noexcept { return m_Size; }
         void print() const;
 
@@ -171,13 +171,13 @@ namespace pysojic
     }
 
     template <typename T>
-    ForwardList<T>::ForwardList(const ForwardList& other)
+    ForwardList<T>::ForwardList(ForwardList&& other) noexcept
         : m_Head{std::exchange(other.m_Head, nullptr)}, m_Tail{std::exchange(other.Tail, nullptr)}, 
         m_Size{std::exchange(other.m_Size, 0)}
     {}
 
     template <typename T>
-    ForwardList<T>& ForwardList<T>::operator=(const ForwardList& other)
+    ForwardList<T>& ForwardList<T>::operator=(ForwardList&& other) noexcept
     {
         if (this != &other)
         {
