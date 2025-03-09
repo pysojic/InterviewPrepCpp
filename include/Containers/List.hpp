@@ -10,10 +10,10 @@ class List
     template <typename K>
     struct Node
     {
-        Node(const K& val) noexcept
+        explicit Node(const K& val) noexcept
             : m_Data{val}, m_Prev{nullptr}, m_Next{nullptr}
         {}
-        Node(K&& val) noexcept
+        explicit Node(K&& val) noexcept
             : m_Data{std::move(val)}, m_Prev{nullptr}, m_Next{nullptr}
         {}
         Node(const Node& other)

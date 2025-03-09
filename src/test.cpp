@@ -7,6 +7,7 @@
 #include "Containers/Vector.hpp"
 #include "SmartPointers/SharedPtr.hpp"
 #include "Containers/List.hpp"
+#include "Containers/ForwardList.hpp"
 
 struct testClass
 {
@@ -54,16 +55,10 @@ struct testClass
 
 int main()
 {
-    pysojic::SharedPtr<testClass> ptr = pysojic::make_shared<testClass>(3, 4);
-    ptr->print();
-
-    // List<int> l1{1, 2, 4, 5, 6};
-    // List<int> l2{0, 3, 4, 5, 9, 11, 12, 29};
-
-    // l1.print();
-    // l2.print();
-
-    // l1.merge(l2);
-    // l1.print();
-    // std::cout << l1.back();
+    pysojic::ForwardList<int> l1{1,2,3,4,5};
+    pysojic::ForwardList<int> l2(l1);
+    l1.print();
+    l2.print();
+    l2.clear();
+    l2.print();
 }

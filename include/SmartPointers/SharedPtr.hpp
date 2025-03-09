@@ -167,20 +167,20 @@ namespace pysojic
     SharedPtr<T> make_shared(Args&&... args)
     {
         using ControlBlock = typename SharedPtr<T>::template ControlBlock<T>;
-        // Allocate a contiguous block for T and its ControlBlock.
+        // Allocate a contiguous block for T and its ControlBlock
         T* block = static_cast<T*>(::operator new(sizeof(T) + sizeof(ControlBlock)));
         
-        // Construct T at the beginning of the block.
+        // Construct T at the beginning of the block
         std::construct_at(block, std::forward<Args>(args)...);
         
-        // Calculate the address for the ControlBlock.
+        // Calculate the address for the ControlBlock
         auto* cbMem = reinterpret_cast<ControlBlock*>(
             reinterpret_cast<char*>(block) + sizeof(T)
         );
         
         // Construct the ControlBlock
         // Need to use placement new instead of std::construct_at since that function does not have access to
-        // the private constructors of the ControlBlock class.
+        // the private constructors of the ControlBlock class
         ::new(cbMem) ControlBlock(block);
         
         return SharedPtr<T>(cbMem);

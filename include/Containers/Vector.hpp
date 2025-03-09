@@ -101,9 +101,9 @@ Vector<T>::Vector(std::initializer_list<T> init)
     m_Capacity = size;
     m_Size = 0;
 
-    for (auto&& elem : init)
+    for (auto& elem : init)
     {
-        std::construct_at(&m_Arr[m_Size++], std::move(elem));
+        std::construct_at(&m_Arr[m_Size++], elem);
     }
 }
 
