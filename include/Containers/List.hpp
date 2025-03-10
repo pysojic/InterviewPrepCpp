@@ -102,14 +102,12 @@ public:
             auto it = list.begin();
             m_Head = new Node<T>{*it};
             Node<T>* curr = m_Head;
-            ++it;
-            while(it != list.end())
+            while(++it != list.end())
             {
                 Node<T>* next = new Node<T>{*it};
                 curr->m_Next = next;
                 next->m_Prev = curr;
                 curr = next;
-                ++it;
             }
             m_Tail = curr;
         }

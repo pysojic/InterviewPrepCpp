@@ -55,9 +55,6 @@ struct testClass
 
 int main()
 {
-    pysojic::ForwardList<testClass> l1;
-    l1.emplace_back(2, 1);
-    l1.emplace_back(2, 5);
-    l1.push_back({3,1});
+    List<int> l1{1,2,3,4,5,6,8};
     l1.print();
 }
