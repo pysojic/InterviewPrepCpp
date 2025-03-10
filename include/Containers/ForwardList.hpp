@@ -37,10 +37,13 @@ namespace pysojic
         void push_back(const T& obj);
         void push_back(T&& obj);
         void pop_front();
-        void pop_back();
-        T& front();
-        T& back();
+        T& front() { return m_Head->m_Data; }
+        T& back() { return m_Tail->m_Data; }
         void clear();
+        template <typename... Args>
+        void emplace_back(Args&&... args);
+        template <typename... Args>
+        void emplace_front(Args&&... args);
 
         const T& front() const { return m_Head->m_Data; }
         const T& back() const { return m_Tail->m_Data; }
@@ -192,6 +195,127 @@ namespace pysojic
     {
         clear();
     } 
+    
+    template <typename T>
+    void ForwardList<T>::push_back(const T& val)
+    {
+        if(m_Head)
+        {
+            Node<T>* newNode = new Node<T>{val};
+            m_Tail->m_Next = newNode;
+            m_Tail = newNode;
+        }
+        else
+        {
+            Node<T>* newNode = new Node<T>{val};
+            m_Head = m_Tail = newNode;
+        }
+        ++m_Size;
+    }
+
+    template <typename T>
+    void ForwardList<T>::push_back(T&& val)
+    {
+        if(m_Head)
+        {
+            Node<T>* newNode = new Node<T>{std::move(val)};
+            m_Tail->m_Next = newNode;
+            m_Tail = newNode;
+        }
+        else
+        {
+            Node<T>* newNode = new Node<T>{std::move(val)};
+            m_Head = m_Tail = newNode;
+        }
+        ++m_Size;
+    }
+
+    template <typename T>
+    void ForwardList<T>::push_front(const T& val)
+    {
+        if(m_Head)
+        {
+            Node<T>* newNode = new Node<T>{val};
+            newNode->m_Next = m_Head;
+            m_Head = newNode;
+        }
+        else
+        {
+            Node<T>* newNode = new Node<T>{val};
+            m_Head = m_Tail = newNode;
+        }
+        ++m_Size;
+    }
+
+    template <typename T>
+    void ForwardList<T>::push_front(T&& val)
+    {
+        if(m_Head)
+        {
+            Node<T>* newNode = new Node<T>{std::move(val)};
+            newNode->m_Next = m_Head;
+            m_Head = newNode;
+        }
+        else
+        {
+            Node<T>* newNode = new Node<T>{std::move(val)};
+            m_Head = m_Tail = newNode;
+        }
+        ++m_Size;
+    }
+
+    template<typename T>
+    void ForwardList<T>::pop_front()
+    {
+        if(m_Head->m_Next)
+        {
+            Node<T>* newHead = m_Head->m_Next;
+            delete m_Head;
+            m_Head = newHead;
+            --m_Size;
+            return;
+        }
+
+        delete m_Head;
+        m_Head = m_Tail = nullptr;
+        --m_Size;
+    }
+
+    template<typename T>
+    template <typename... Args>
+    void ForwardList<T>::emplace_back(Args&&... args)
+    {
+        if(m_Head)
+        {
+            Node<T>* newNode = new Node<T>(std::forward<Args>(args)...);
+            m_Tail->m_Next = newNode;
+            m_Tail = newNode;
+        }
+        else
+        {
+            Node<T>* newNode = new Node<T>(std::forward<Args>(args)...);
+            m_Head = m_Tail = newNode;
+        }
+        ++m_Size;
+    }
+
+    template<typename T>
+    template <typename... Args>
+    void ForwardList<T>::emplace_front(Args&&... args)
+    {
+        if(m_Head)
+        {
+            Node<T>* newNode = new Node<T>(std::forward<Args>(args)...);
+            newNode->m_Next = m_Head;
+            m_Head = newNode;
+        }
+        else
+        {
+            Node<T>* newNode = new Node<T>(std::forward<Args>(args)...);
+            m_Head = m_Tail = newNode;
+        }
+        ++m_Size;
+    }
 
     template<typename T>
     void ForwardList<T>::print() const
@@ -223,5 +347,5 @@ namespace pysojic
         m_Head = nullptr;
         m_Tail = nullptr;
     }
-
 }
+

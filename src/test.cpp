@@ -43,11 +43,11 @@ struct testClass
 
     friend std::ostream& operator << (std::ostream& os, const testClass& test)
     {
-        os << test.a << ',' << test.b;
+        os << '[' << test.a << ',' << test.b << ']';
         return os;
     }
 
-    void print() const { std::cout << a << ',' << b << std::endl; }
+    void print() const { std::cout << '[' << a << ',' << b << ']' << std::endl; }
 
     int a;
     int b;
@@ -55,10 +55,9 @@ struct testClass
 
 int main()
 {
-    pysojic::ForwardList<int> l1{1,2,3,4,5};
-    pysojic::ForwardList<int> l2(std::move(l1));
+    pysojic::ForwardList<testClass> l1;
+    l1.emplace_back(2, 1);
+    l1.emplace_back(2, 5);
+    l1.push_back({3,1});
     l1.print();
-    l2.print();
-    l2.clear();
-    l2.print();
 }
