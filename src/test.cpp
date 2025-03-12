@@ -55,6 +55,13 @@ struct testClass
 
 int main()
 {
-    List<int> l1{1,2,3,4,5,6,8};
+    pysojic::List<int> l1{1,2,3,4,5,6,8};
     l1.print();
+    l1.reverse();
+    l1.print();
+    l1.reverse();
+    auto l2{l1};
+    l1.merge(l2);
+    l1.print();
+    l2.print();
 }

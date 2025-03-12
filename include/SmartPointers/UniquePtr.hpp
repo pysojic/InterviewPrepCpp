@@ -72,6 +72,7 @@ public:
 
     // Marking this as explicit prevents implicit conversions in general 
     // but still allows usage in conditional expressions where a bool is required by context
+    // e.g. if(sharedPtr) will work as expected
     explicit operator bool()
     {
         return m_Data != nullptr;

@@ -3,43 +3,109 @@
 #include <stdexcept>
 #include <initializer_list>
 
-
-template <typename T>
-class List
-{   
-    template <typename K>
-    struct Node
-    {
-        explicit Node(const K& val) noexcept
-            : m_Data{val}, m_Prev{nullptr}, m_Next{nullptr}
-        {}
-        explicit Node(K&& val) noexcept
-            : m_Data{std::move(val)}, m_Prev{nullptr}, m_Next{nullptr}
-        {}
-        Node(const Node& other)
-            : m_Data{other.m_Data}, m_Prev{nullptr}, m_Next{nullptr}
-        {}
-        template<typename... Args>
-        Node(Args&&... args) noexcept // Contruct the data in-place by passing the object's contructor args
-            : m_Data{std::forward<Args>(args)...}, m_Prev{nullptr}, m_Next{nullptr}
-        {}
-        Node(Node&& other) noexcept
+namespace pysojic
+{
+    template <typename T>
+    class List
+    {   
+        template <typename K>
+        struct Node
         {
-            m_Data = std::move(other.m_Data);
-            m_Prev = std::exchange(other.m_Prev, nullptr);
-            m_Next = std::exchange(other.m_Next, nullptr);
-        }
+            explicit Node(const K& val) noexcept;
+            explicit Node(K&& val) noexcept;
+            Node(const Node& other);
+            template<typename... Args>
+            Node(Args&&... args) noexcept; // Contruct the data in-place by passing the object's contructor args
+            Node(Node&& other) noexcept;
 
-        K m_Data{};
-        Node* m_Prev = nullptr;
-        Node* m_Next = nullptr;
+            K m_Data{};
+            Node* m_Prev = nullptr;
+            Node* m_Next = nullptr;
+        };
+
+    public:
+        List();
+        List(size_t size);
+        List(size_t size, const T& val);
+        List(std::initializer_list<T> l);
+        List(const List& other);
+        List& operator=(const List& other);
+        List(List&& other) noexcept;
+        List& operator= (List&& other) noexcept;
+        ~List() noexcept;
+
+        void push_front(const T& elem);
+        void push_front(T&& elem);
+        void push_back(const T& elem);
+        void push_back(T&& elem);
+        template <typename... Args>
+        void emplace_front(Args&&... args);
+        template <typename... Args>
+        void emplace_back(Args&&... args);
+        void pop_front();
+        void pop_back();
+        void reverse();
+        void merge(List& other);
+        void clear();
+
+        T& front() noexcept { return m_Head->m_Data; }
+        T& back() noexcept { return m_Tail->m_Data; }
+        const T& front() const noexcept { return m_Head->m_Data; }
+        const T& back() const noexcept { return m_Tail->m_Data; }
+        bool empty() const noexcept { return m_Head == nullptr ? true : false; }
+        size_t size() const noexcept { return m_Size; }
+        void print() const;
+
+    private:
+        void reset();
+        
+    private:
+        Node<T>* m_Head = nullptr;
+        Node<T>* m_Tail = nullptr;
+        size_t m_Size{};
     };
 
-public:
-    List()
-        : m_Head{nullptr}, m_Tail{nullptr}, m_Size{}
+
+
+    template <typename T>
+    template <typename K>
+    List<T>::Node<K>::Node(const K& val) noexcept
+                : m_Data{val}, m_Prev{nullptr}, m_Next{nullptr}
+            {}
+    
+    template <typename T>
+    template <typename K>
+    List<T>::Node<K>::Node(K&& val) noexcept
+        : m_Data{std::move(val)}, m_Prev{nullptr}, m_Next{nullptr}
     {}
-    List(size_t size) 
+
+    template <typename T>
+    template <typename K>
+    List<T>::Node<K>::Node(const Node& other)
+        : m_Data{other.m_Data}, m_Prev{nullptr}, m_Next{nullptr}
+    {}
+
+    template <typename T>
+    template <typename K>
+    template<typename... Args>
+    List<T>::Node<K>::Node(Args&&... args) noexcept // Contruct the data in-place by passing the object's contructor args
+        : m_Data{std::forward<Args>(args)...}, m_Prev{nullptr}, m_Next{nullptr}
+    {}
+
+    template <typename T>
+    template <typename K>
+    List<T>::Node<K>::Node(Node&& other) noexcept
+        : m_Data{std::move(other.m_Data)}, m_Prev{std::exchange(other.m_Prev, nullptr)},
+        m_Next{std::exchange(other.m_Next, nullptr)}
+    {}
+
+    template <typename T>
+    List<T>::List()
+            : m_Head{nullptr}, m_Tail{nullptr}, m_Size{}
+        {}
+    
+    template <typename T>
+    List<T>::List(size_t size) 
         : m_Size{size}
     {
         if (size > 1)
@@ -66,7 +132,9 @@ public:
             m_Tail = nullptr;
         }
     }
-    List(size_t size, const T& val)
+
+    template <typename T>
+    List<T>::List(size_t size, const T& val)
         : m_Size{size}
     {
         if (size > 1)
@@ -94,7 +162,9 @@ public:
             m_Tail = nullptr;
         }
     }
-    List(std::initializer_list<T> list)
+
+    template <typename T>
+    List<T>::List(std::initializer_list<T> list)
         : m_Size{list.size()}
     {
         if (m_Size)
@@ -112,7 +182,9 @@ public:
             m_Tail = curr;
         }
     }
-    List(const List& other)
+
+    template <typename T>
+    List<T>::List(const List& other)
         : m_Size{other.m_Size}
     {
         // Check that the other list is not empty
@@ -133,7 +205,9 @@ public:
             m_Tail = curr;
         }
     }
-    List& operator=(const List& other)
+
+    template <typename T>
+    List<T>& List<T>::operator=(const List& other)
     {
         if (this != &other)
         {
@@ -161,12 +235,15 @@ public:
         }
         return *this;
     }
-    List(List&& other) noexcept
+
+    template <typename T>
+    List<T>::List(List&& other) noexcept
         : m_Head{std::exchange(other.m_Head, nullptr)}, m_Tail{std::exchange(other.m_Tail, nullptr)}, 
         m_Size{std::exchange(other.m_Size, 0)}
-    {
-    }
-    List& operator= (List&& other) noexcept
+    {}
+
+    template <typename T>
+    List<T>& List<T>::operator= (List&& other) noexcept
     {
         if (this != &other)
         {
@@ -177,12 +254,15 @@ public:
         }
         return *this;
     }
-    ~List() noexcept
+
+    template <typename T>
+    List<T>::~List() noexcept
     {
         clear();
     }
 
-    void push_front(const T& elem) 
+    template <typename T>
+    void List<T>::push_front(const T& elem) 
     {
         if (m_Head)
         {
@@ -199,7 +279,8 @@ public:
         ++m_Size;
     }
 
-    void push_front(T&& elem) 
+    template <typename T>
+    void List<T>::push_front(T&& elem) 
     {
         if (m_Head)
         {
@@ -216,8 +297,9 @@ public:
         ++m_Size;
     }
 
+    template <typename T>
     template <typename... Args>
-    void emplace_front(Args&&... args)
+    void List<T>::emplace_front(Args&&... args)
     {
         if (m_Head)
         {
@@ -234,7 +316,8 @@ public:
         ++m_Size;
     }
 
-    void push_back(const T& elem)
+    template <typename T>
+    void List<T>::push_back(const T& elem)
     {
         if (m_Tail)
         {
@@ -251,7 +334,8 @@ public:
         ++m_Size;
     }
 
-    void push_back(T&& elem)
+    template <typename T>
+    void List<T>::push_back(T&& elem)
     {
         if (m_Tail)
         {
@@ -268,8 +352,9 @@ public:
         ++m_Size;
     }
 
+    template <typename T>
     template <typename... Args>
-    void emplace_back(Args&&... args)
+    void List<T>::emplace_back(Args&&... args)
     {
         if (m_Head)
         {
@@ -286,7 +371,8 @@ public:
         ++m_Size;
     }
 
-    void pop_front()
+    template <typename T>
+    void List<T>::pop_front()
     {
         // Check if the list has more than 1 element
         if (m_Head->m_Next)
@@ -306,7 +392,8 @@ public:
         // Note: handling calling pop_back/pop_front on an empty list is left to the user, this is UB in the current impl
     }
 
-    void pop_back()
+    template <typename T>
+    void List<T>::pop_back()
     {
         if (m_Tail->m_Prev)
         {
@@ -323,7 +410,8 @@ public:
         --m_Size;
     }
 
-    void reverse_list()
+    template <typename T>
+    void List<T>::reverse()
     {
         m_Tail = m_Head;
         Node<T>* current = m_Head;
@@ -340,7 +428,8 @@ public:
         m_Head = temp;
     }
 
-    void merge(List& other)
+    template <typename T>
+    void List<T>::merge(List& other)
     {
         if (this != &other)
         {
@@ -394,9 +483,10 @@ public:
         }
     }
 
-    void clear()
+    template <typename T>
+    void List<T>::clear()
     {
- 
+
         Node<T>* curr = m_Head;
         while(curr)
         {
@@ -408,32 +498,8 @@ public:
         m_Size = 0;
     }
 
-    T& front() noexcept
-    {
-        return m_Head->m_Data;
-    }
-    T& back() noexcept
-    {
-        return m_Tail->m_Data;
-    }
-
-    const T& front() const noexcept
-    {
-        return m_Head->m_Data;
-    }
-    const T& back() const noexcept
-    {
-        return m_Tail->m_Data;
-    }
-    bool empty() const noexcept
-    {
-        return m_Head == nullptr ? true : false;
-    }
-    size_t size() const noexcept
-    {
-        return m_Size;
-    }
-    void print() const
+    template <typename T>
+    void List<T>::print() const
     {
         Node<T>* curr = m_Head;
         while(curr)
@@ -443,16 +509,12 @@ public:
         }
         std::cout << std::endl;
     }
-private:
-    void reset()
+
+    template <typename T>
+    void List<T>::reset()
     {
         m_Head = nullptr;
         m_Tail = nullptr;
         m_Size = 0;
     }
-    
-private:
-    Node<T>* m_Head = nullptr;
-    Node<T>* m_Tail = nullptr;
-    size_t m_Size{};
-};
+}
