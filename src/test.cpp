@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <bit>
 
 #include "Containers/Array.hpp"
 #include "Containers/Vector.hpp"
