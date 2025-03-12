@@ -56,6 +56,8 @@ namespace pysojic
         size_t m_Size;
     };
 
+    //------------Implementation--------------
+
     template <typename T>
     template <typename K>
     ForwardList<T>::Node<K>::Node(const K& val)

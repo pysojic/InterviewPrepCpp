@@ -55,6 +55,8 @@ namespace pysojic
         ControlBlock<T>* m_ControlBlock;
     };
 
+    //------------Implementation--------------
+
     template <typename T>
     template <typename K>
     SharedPtr<T>::ControlBlock<K>::ControlBlock() 

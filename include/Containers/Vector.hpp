@@ -45,6 +45,8 @@ private:
     size_t m_Size;
 };
 
+//------------Implementation--------------
+
 template <typename T>
 Vector<T>::Vector() 
     : m_Capacity{1}, m_Size{0}
