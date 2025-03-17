@@ -3,12 +3,15 @@
 #include <string>
 #include <memory>
 #include <bit>
+#include <thread>
+#include <chrono>
 
 #include "Containers/Array.hpp"
 #include "Containers/Vector.hpp"
 #include "SmartPointers/SharedPtr.hpp"
 #include "Containers/List.hpp"
 #include "Containers/ForwardList.hpp"
+#include "Concurrency/SpinLock.hpp"
 
 struct testClass
 {
@@ -54,15 +57,21 @@ struct testClass
     int b;
 };
 
+SpinLock sp;
+
+void test()
+{
+    sp.lock();
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    sp.unlock();
+}
+
 int main()
 {
-    pysojic::List<int> l1{1,2,3,4,5,6,8};
-    l1.print();
-    l1.reverse();
-    l1.print();
-    l1.reverse();
-    auto l2{l1};
-    l1.merge(l2);
-    l1.print();
-    l2.print();
+    std::thread t(test);
+    sp.lock();
+    std::cout << "----------------I got this!!!-------------------" << std::endl;
+    sp.unlock();
+
+    t.join();
 }
