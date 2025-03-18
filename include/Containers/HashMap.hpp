@@ -19,9 +19,9 @@ namespace pysojic
         
         void insert(const Key& key, const Value& val);
         void remove(const Key& key);
-        const Value& operator[](const Key& key) const;
         Value& operator[](const Key& key);
-
+        
+        const Value& at(const Key& key) const;
         void find(const Key& key) const;
         bool empty() const noexcept;
         size_t size() const noexcept;
@@ -166,6 +166,21 @@ namespace pysojic
             }
 
         throw std::runtime_error{"Unexpected error"};
+    }
+
+    template <typename Key, typename Value, typename HashFunction>
+    const Value& HashMap<Key, Value, HashFunction>::at(const Key& key) const
+    {
+        size_t hashVal = hash_function(key);
+        
+        for (auto& list : m_Buckets)
+            for (auto& [k, v] : list)
+            {
+                if (k == key)
+                    return v;
+            }
+
+        throw std::out_of_range{"Key not found"};
     }
 
     template <typename Key, typename Value, typename HashFunction>
