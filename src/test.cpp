@@ -91,9 +91,13 @@ int main()
     hm.insert("Hello52", 1);
     hm.insert("Hello63", 1);
     hm.insert("Hello74", 1);
-    hm.insert("Hello851", 1);
+    hm.insert("Hello851", 112);
     hm.insert("Hello9", 1);
+    hm["test"];
+    hm["test"] = 30;
 
     std::cout << "After2: " <<hm.load_factor() << std::endl;
+
+    std::cout << hm["test"] << std::endl;
 
 }

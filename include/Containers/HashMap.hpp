@@ -3,6 +3,7 @@
 #include <vector>
 #include <list>
 #include <tuple>
+#include <stdexcept>
 
 namespace pysojic
 {
@@ -28,6 +29,7 @@ namespace pysojic
         
     private:
         size_t hash_function(const Key& key) const;
+        size_t hash_function(const Key& key, size_t newBucketCount) const;
         void rehash(size_t count);
 
     private:
@@ -46,17 +48,23 @@ namespace pysojic
     }
 
     template <typename Key, typename Value, typename HashFunction>
+    size_t HashMap<Key, Value, HashFunction>::hash_function(const Key& key, size_t newBucketCount) const
+    {
+        return HashFunction{}(key) % newBucketCount;
+    }
+
+    template <typename Key, typename Value, typename HashFunction>
     void HashMap<Key, Value, HashFunction>::rehash(size_t count) 
     {
         size_t bucketsCount = m_Buckets.size();
         if (count > bucketsCount)
         {
-            std::vector<std::list<std::pair<Key, Value>>> newBuckets(bucketsCount);
+            std::vector<std::list<std::pair<Key, Value>>> newBuckets(count);
             
             for (auto& list : m_Buckets)
                 for (auto& pair : list)
                 {
-                    size_t newHash = hash_function(pair.first);
+                    size_t newHash = hash_function(pair.first, count);
                     newBuckets[newHash].push_back(std::move(pair));
                 }
             m_Buckets = std::move(newBuckets);
@@ -127,6 +135,37 @@ namespace pysojic
 
         if (load_factor() > m_MaxLoadFactor)
             rehash(m_Buckets.size() * 2);
+    }
+
+    template <typename Key, typename Value, typename HashFunction>
+    Value& HashMap<Key, Value, HashFunction>::operator[] (const Key& key)
+    {
+        size_t hashVal = hash_function(key);
+        
+        for (auto& list : m_Buckets)
+            for (auto& [k, v] : list)
+            {
+                if (k == key)
+                    return v;
+            }
+        
+        m_Buckets[hashVal].push_back({key, Value{}});
+        ++m_NumElems;
+
+        if (load_factor() > m_MaxLoadFactor)
+        {
+            rehash(m_Buckets.size() * 2);
+        }
+
+        hashVal = hash_function(key);
+        for (auto& list : m_Buckets)
+            for (auto& [k, v] : list)
+            {
+                if (k == key)
+                    return v;
+            }
+
+        throw std::runtime_error{"Unexpected error"};
     }
 
     template <typename Key, typename Value, typename HashFunction>
