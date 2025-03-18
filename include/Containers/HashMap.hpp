@@ -17,6 +17,7 @@ namespace pysojic
         HashMap(HashMap&& other) noexcept;
         HashMap& operator=(HashMap&& other);
         
+        void rehash(size_t count);
         void insert(const Key& key, const Value& val);
         void remove(const Key& key);
         Value& operator[](const Key& key);
@@ -30,7 +31,6 @@ namespace pysojic
     private:
         size_t hash_function(const Key& key) const;
         size_t hash_function(const Key& key, size_t newBucketCount) const;
-        void rehash(size_t count);
 
     private:
         std::vector<std::list<std::pair<Key, Value>>> m_Buckets;
@@ -142,12 +142,11 @@ namespace pysojic
     {
         size_t hashVal = hash_function(key);
         
-        for (auto& list : m_Buckets)
-            for (auto& [k, v] : list)
-            {
-                if (k == key)
-                    return v;
-            }
+        for (auto& [k, v] : m_Buckets[hashVal])
+        {
+            if (k == key)
+                return v;
+        }
         
         m_Buckets[hashVal].push_back({key, Value{}});
         ++m_NumElems;
@@ -155,15 +154,14 @@ namespace pysojic
         if (load_factor() > m_MaxLoadFactor)
         {
             rehash(m_Buckets.size() * 2);
+            hashVal = hash_function(key);
         }
 
-        hashVal = hash_function(key);
-        for (auto& list : m_Buckets)
-            for (auto& [k, v] : list)
-            {
-                if (k == key)
-                    return v;
-            }
+        for (auto& [k, v] : m_Buckets[hashVal])
+        {
+            if (k == key)
+                return v;
+        }
 
         throw std::runtime_error{"Unexpected error"};
     }
@@ -173,12 +171,11 @@ namespace pysojic
     {
         size_t hashVal = hash_function(key);
         
-        for (auto& list : m_Buckets)
-            for (auto& [k, v] : list)
-            {
-                if (k == key)
-                    return v;
-            }
+        for (auto& [k, v] : m_Buckets[hashVal])
+        {
+            if (k == key)
+                return v;
+        }
 
         throw std::out_of_range{"Key not found"};
     }
