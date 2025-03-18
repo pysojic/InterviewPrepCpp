@@ -15,7 +15,7 @@ namespace pysojic
         HashMap(const HashMap& other);
         HashMap& operator=(const HashMap& other);
         HashMap(HashMap&& other) noexcept;
-        HashMap& operator=(HashMap&& other);
+        HashMap& operator=(HashMap&& other) noexcept;
         
         void rehash(size_t count);
         void insert(const Key& key, const Value& val);
@@ -101,7 +101,7 @@ namespace pysojic
     {}
 
     template <typename Key, typename Value, typename HashFunction>
-    auto HashMap<Key, Value, HashFunction>::operator= (HashMap&& other) -> HashMap&
+    auto HashMap<Key, Value, HashFunction>::operator= (HashMap&& other) noexcept -> HashMap&
     {
         if (this != &other)
         {
@@ -135,6 +135,24 @@ namespace pysojic
 
         if (load_factor() > m_MaxLoadFactor)
             rehash(m_Buckets.size() * 2);
+    }
+
+    template <typename Key, typename Value, typename HashFunction>
+    void HashMap<Key, Value, HashFunction>::remove(const Key& key)
+    {
+        size_t hashVal = hash_function(key);
+
+        for (auto it = m_Buckets[hashVal].begin(); it != m_Buckets[hashVal].end(); ++it)
+        {
+            if (it->first == key)
+            {
+                m_Buckets[hashVal].erase(it);
+                --m_NumElems;
+                return;
+            }
+        }
+
+        throw std::out_of_range("Key not found");
     }
 
     template <typename Key, typename Value, typename HashFunction>
@@ -183,7 +201,7 @@ namespace pysojic
     template <typename Key, typename Value, typename HashFunction>
     bool HashMap<Key, Value, HashFunction>::empty() const noexcept
     {
-        return m_NumElems == 0 ? true : false;
+        return m_NumElems == 0;
     }
 
     template <typename Key, typename Value, typename HashFunction>

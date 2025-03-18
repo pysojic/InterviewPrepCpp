@@ -98,7 +98,8 @@ int main()
 
     std::cout << "After2: " <<hm.load_factor() << std::endl;
 
-    std::cout << hm.at("test") << std::endl;
-    std::cout << hm.at("test2") << std::endl;
+    std::cout << hm.at("Hello452") << std::endl;
+    hm.remove("Hello52");
+    std::cout << hm.at("Hello52") << std::endl;
 
 }
