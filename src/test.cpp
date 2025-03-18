@@ -12,6 +12,7 @@
 #include "Containers/List.hpp"
 #include "Containers/ForwardList.hpp"
 #include "Concurrency/SpinLock.hpp"
+#include "Containers/HashMap.hpp"
 
 struct testClass
 {
@@ -68,10 +69,31 @@ void test()
 
 int main()
 {
-    std::thread t(test);
-    sp.lock();
-    std::cout << "----------------I got this!!!-------------------" << std::endl;
-    sp.unlock();
+    pysojic::HashMap<std::string, int> hm;
 
-    t.join();
+    std::cout << "Before: " << hm.load_factor() << std::endl;
+
+    hm.insert("Hello", 1);
+    hm.insert("Hello2", 1);
+    hm.insert("Hello3", 1);
+    hm.insert("Hello4", 1);
+
+    std::cout << "Middle: " << hm.load_factor() << std::endl;
+
+    hm.insert("Hello5", 1);
+    hm.insert("Hello6", 1);
+    hm.insert("Hello7", 1);
+    hm.insert("Hello8", 1);
+    hm.insert("Hello9", 1);
+
+    std::cout << "After: " <<hm.load_factor() << std::endl;
+
+    hm.insert("Hello52", 1);
+    hm.insert("Hello63", 1);
+    hm.insert("Hello74", 1);
+    hm.insert("Hello851", 1);
+    hm.insert("Hello9", 1);
+
+    std::cout << "After2: " <<hm.load_factor() << std::endl;
+
 }
