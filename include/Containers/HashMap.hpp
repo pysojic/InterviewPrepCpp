@@ -36,7 +36,7 @@ namespace pysojic
         std::vector<std::list<std::pair<Key, Value>>> m_Buckets;
         size_t m_NumElems;
         double m_MaxLoadFactor;
-        inline static size_t m_InitialBucketCount = 10;
+        inline static size_t m_InitialBucketCount = 19;
     };
 
     //------------Implementation--------------
