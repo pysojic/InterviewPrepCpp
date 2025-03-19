@@ -72,11 +72,11 @@ namespace pysojic
 
     template <typename Key, typename Value, typename HashFunction>
     OpenAddressingHashMap<Key, Value, HashFunction>::OpenAddressingHashMap()
-        : m_Arr(3), m_NumElems(0), m_MaxLoadFactor(0.8)
+        : m_Arr(19), m_NumElems(0), m_MaxLoadFactor(0.8)
     {
     }
 
-    // Rehash: Create a new table of size new_size and reinsert all OCCUPIED entries.
+    // Rehash: Create a new table of size new_size and reinsert all OCCUPIED entries
     template <typename Key, typename Value, typename HashFunction>
     void OpenAddressingHashMap<Key, Value, HashFunction>::rehash(size_t new_size)
     {
@@ -91,7 +91,7 @@ namespace pysojic
                 {
                     index = (index + 1) % new_size;
                 }
-                new_arr[index] = m_Arr[i];
+                new_arr[index] = std::move(m_Arr[i]);
             }
         }
         m_Arr = std::move(new_arr);
@@ -189,7 +189,7 @@ namespace pysojic
             index = (index + 1) % m_Arr.size();
             if (index == start)
             {
-                // Should never happen if rehashing is working correctly.
+                // Should never happen if rehashing is working correctly
                 throw std::runtime_error("HashMap is full");
             }
         }
