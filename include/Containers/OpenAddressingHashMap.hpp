@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdexcept>
 
+// The following uses linear probing
 namespace pysojic
 {
     template <typename Key, typename Value, typename HashFunction = std::hash<Key>>
@@ -23,7 +24,6 @@ namespace pysojic
             Entry()
                 : key_{}, value_{}, state_{State::EMPTY}
             {}
-
             Entry(const Key& key, const Value& val)
                 : key_{key}, value_{val}, state_{State::OCCUPIED}
             {}
@@ -43,7 +43,7 @@ namespace pysojic
         void rehash(size_t new_size);
 
         size_t size() const noexcept { return m_NumElems; }
-        size_t capacity() const noexcept { return m_Arr.size(); }
+        size_t capacity() const noexcept { return m_Arr.capacity(); }
         double load_factor() const noexcept { return static_cast<double>(m_NumElems) / m_Arr.size(); }
 
     private:
@@ -123,22 +123,14 @@ namespace pysojic
                 ++m_NumElems;
                 return;
             }
-            else if (m_Arr[index].state_ == Entry::State::DELETED)
+            else if (m_Arr[index].state_ == Entry::State::DELETED && first_deleted == m_Arr.size())
             {
-                // Record the first deleted slot
-                if (first_deleted == m_Arr.size())
-                {
-                    first_deleted = index;
-                }
+                first_deleted = index;
             }
-            else if (m_Arr[index].state_ == Entry::State::OCCUPIED)
+            else if (m_Arr[index].state_ == Entry::State::OCCUPIED && m_Arr[index].key_ == key)
             {
-                // Key exists: update the value
-                if (m_Arr[index].key_ == key)
-                {
-                    m_Arr[index].value_ = val;
-                    return;
-                }
+                m_Arr[index].value_ = val;
+                return;
             }
             index = (index + 1) % m_Arr.size();
             if (index == start)
@@ -175,12 +167,9 @@ namespace pysojic
                 ++m_NumElems;
                 return m_Arr[index].value_;
             }
-            else if (m_Arr[index].state_ == Entry::State::DELETED)
+            else if (m_Arr[index].state_ == Entry::State::DELETED && first_deleted == m_Arr.size())
             {
-                if (first_deleted == m_Arr.size())
-                {
-                    first_deleted = index;
-                }
+                first_deleted = index;
             }
             else if (m_Arr[index].state_ == Entry::State::OCCUPIED && m_Arr[index].key_ == key)
             {
@@ -209,7 +198,9 @@ namespace pysojic
                 --m_NumElems;
                 return;
             }
+
             index = (index + 1) % m_Arr.size();
+            
             if (index == start)
                 break;
         }
