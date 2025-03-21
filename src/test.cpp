@@ -14,6 +14,7 @@
 #include "Concurrency/SpinLock.hpp"
 #include "Containers/HashMap.hpp"
 #include "Containers/OpenAddressingHashMap.hpp"
+#include "Utilities/Any.hpp"
 
 struct testClass
 {
@@ -70,20 +71,8 @@ void test()
 
 int main()
 {
-    pysojic::OpenAddressingHashMap<int, std::string> map;
+    pysojic::Any test(2);
 
-    map.insert(2, "Hello");
-    map.insert(5, "Hello2");
-    map.insert(3, "Hell31o");
-    map.insert(4, "Hell1o");
-
-    map.insert(6, "He5llo");
-    map.insert(7, "Hell312o");
-    map.insert(98, "He1llo");
-    map.insert(123, "H312ello");
-    map.insert(90, "He4llo");
-    std::cout << map[2] << std::endl;
-
-    map.remove(2);
+    std::cout << test << std::endl;
 
 }
