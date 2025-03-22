@@ -71,8 +71,11 @@ void test()
 
 int main()
 {
-    pysojic::Any test(2);
+    pysojic::Any test(2.0);
 
-    std::cout << test << std::endl;
+    std::cout << pysojic::any_cast<double>(test) << '\n' << test.type().name() << std::endl;
 
+    test = std::string("Hello");
+
+    std::cout << pysojic::any_cast<std::string>(test) << '\n' << test.type().name() << std::endl;
 }

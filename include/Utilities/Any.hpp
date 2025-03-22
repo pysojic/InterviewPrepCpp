@@ -11,6 +11,15 @@ namespace pysojic
         explicit Any(T&&);
         Any(const Any& other);
         ~Any();
+        template <typename T>
+        Any& operator=(T&& other);
+
+        void reset();
+        bool has_value();
+        const std::type_info& type();
+
+        template <typename T>
+        friend T& any_cast(Any& any);
 
     private:
         void* m_Data;
@@ -35,6 +44,39 @@ namespace pysojic
     Any::~Any()
     {
         m_Destroy(m_Data);
+    }
+
+    template <typename T>
+    Any& Any::operator=(T&& data)
+    {
+        reset();  // Clean up any existing stored value
+        m_Data = new T{ std::forward<T>(data) };
+        m_GetType = []() -> const std::type_info& { return typeid(T); };
+        m_Clone = [](void* otherData) -> void* { return new T(*static_cast<T*>(otherData)); };
+        m_Destroy = [](void* data) { delete static_cast<T*>(data); };
+        return *this;
+    }
+
+    void Any::reset()
+    {
+        if (m_Data) 
+        {
+            m_Destroy(m_Data);
+            m_Data = nullptr;
+            m_GetType = []() -> const std::type_info& { return typeid(void); };
+            m_Clone = nullptr;
+            m_Destroy = nullptr;
+        }
+    }
+
+    bool Any::has_value()
+    {
+        return m_Data != nullptr;
+    }
+
+    const std::type_info& Any::type()
+    {
+        return m_GetType();
     }
 
     template<typename T>
