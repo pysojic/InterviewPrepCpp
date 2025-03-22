@@ -71,11 +71,9 @@ void test()
 
 int main()
 {
-    int arr[3] = {1,2,3};
     pysojic::Any test(2.0);
     pysojic::Any test2("Hello");
-    test = arr;
-    
-    std::cout << *pysojic::any_cast<int*>(test) + 1 << std::endl;
+    test.reset();
 
+    pysojic::any_cast<int>(test);
 }

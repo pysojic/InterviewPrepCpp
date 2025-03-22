@@ -52,7 +52,8 @@ namespace pysojic
 
     Any::~Any()
     {
-        m_Destroy(m_Data);
+        if (m_Data)
+            m_Destroy(m_Data);
     }
 
     template <typename T>
@@ -80,8 +81,10 @@ namespace pysojic
         {
             m_Destroy(m_Data);
             m_Data = nullptr;
-            m_GetType = []() -> const std::type_info& { return typeid(void); };
             m_Clone = nullptr;
+            // m_GetType is not set to nullptr since you still need to be able to get the type of the object (even if empty)
+            // otherwise, any_cast on an empty object would lead to runtime error.
+            m_GetType = []() -> const std::type_info& { return typeid(void); };
             m_Destroy = nullptr;
         }
     }
