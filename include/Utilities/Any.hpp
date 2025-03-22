@@ -11,9 +11,9 @@ namespace pysojic
         explicit Any(T&&);
         Any(const Any& other);
         ~Any();
+
         template <typename T>
         Any& operator=(T&& other);
-
         void swap(Any& other) noexcept;
         void reset() noexcept;
         bool has_value() noexcept;
@@ -99,9 +99,9 @@ namespace pysojic
     template<typename T>
     T& any_cast(Any& any)
     {
-        if (typeid(T) == any.m_GetType())
+        if (typeid(std::decay_t<T>) == any.m_GetType())
         {
-            return *static_cast<T*>(any.m_Data);
+            return *static_cast<std::decay_t<T>*>(any.m_Data);
         }
         else
         {

@@ -71,17 +71,11 @@ void test()
 
 int main()
 {
+    int arr[3] = {1,2,3};
     pysojic::Any test(2.0);
     pysojic::Any test2("Hello");
+    test = arr;
     
-    test = "fasfa";
-
-    std::cout << pysojic::any_cast<const char*>(test) << std::endl;
-    std::cout << pysojic::any_cast<const char*>(test2) << std::endl;
-
-    test.swap(test2);
-
-    std::cout << pysojic::any_cast<const char*>(test) << std::endl;
-    std::cout << pysojic::any_cast<const char*>(test2) << std::endl;
+    std::cout << *pysojic::any_cast<int*>(test) + 1 << std::endl;
 
 }
