@@ -72,10 +72,15 @@ void test()
 int main()
 {
     pysojic::Any test(2.0);
+    pysojic::Any test2("Hello");
+    std::any an("Hello");
 
-    std::cout << pysojic::any_cast<double>(test) << '\n' << test.type().name() << std::endl;
+    std::cout << pysojic::any_cast<double>(test) << std::endl;
+    std::cout << pysojic::any_cast<const char*>(test2) << std::endl;
 
-    test = std::string("Hello");
+    test.swap(test2);
 
-    std::cout << pysojic::any_cast<std::string>(test) << '\n' << test.type().name() << std::endl;
+    std::cout << pysojic::any_cast<const char*>(test) << std::endl;
+    std::cout << pysojic::any_cast<double>(test2) << std::endl;
+
 }

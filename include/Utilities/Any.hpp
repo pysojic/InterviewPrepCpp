@@ -14,9 +14,10 @@ namespace pysojic
         template <typename T>
         Any& operator=(T&& other);
 
-        void reset();
-        bool has_value();
-        const std::type_info& type();
+        void swap(Any& other) noexcept;
+        void reset() noexcept;
+        bool has_value() noexcept;
+        const std::type_info& type() const noexcept;
 
         template <typename T>
         friend T& any_cast(Any& any);
@@ -31,9 +32,9 @@ namespace pysojic
     //------------ Implementation ------------
     template <typename T>
     Any::Any(T&& data)
-        : m_Data{ new T{std::forward<T>(data)} }, m_GetType{[]() -> const std::type_info& { return typeid(T); } },
-        m_Clone{ [](void* otherData) -> void* { return new T(*static_cast<T*>(otherData)); } },
-        m_Destroy{ [](void* data) { delete static_cast<T*>(data); } }
+        : m_Data( new std::decay_t<T>(std::forward<T>(data)) ), m_GetType( []() -> const std::type_info& { return typeid(std::decay_t<T>); } ),
+        m_Clone( [](void* otherData) -> void* { return new std::decay_t<T>(*static_cast<std::decay_t<T>*>(otherData)); } ),
+        m_Destroy( [](void* data) { delete static_cast<std::decay_t<T>*>(data); } )
     {}
 
     Any::Any(const Any& other)
@@ -57,7 +58,15 @@ namespace pysojic
         return *this;
     }
 
-    void Any::reset()
+    void Any::swap(Any& other) noexcept
+    {
+        std::swap(m_Data, other.m_Data);
+        std::swap(m_Clone, other.m_Clone);
+        std::swap(m_GetType, other.m_GetType);
+        std::swap(m_Destroy, other.m_Destroy);
+    }
+
+    void Any::reset() noexcept
     {
         if (m_Data) 
         {
@@ -69,12 +78,12 @@ namespace pysojic
         }
     }
 
-    bool Any::has_value()
+    bool Any::has_value() noexcept
     {
         return m_Data != nullptr;
     }
 
-    const std::type_info& Any::type()
+    const std::type_info& Any::type() const noexcept
     {
         return m_GetType();
     }
