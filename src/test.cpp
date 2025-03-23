@@ -71,9 +71,9 @@ void test()
 
 int main()
 {
-    pysojic::Any test(2.0);
-    pysojic::Any test2("Hello");
-    test.reset();
+   pysojic::ForwardList<int> f = {1,2,3,4,5,6,6,7};
 
-    pysojic::any_cast<int>(test);
+   f.reverse_print(f.get());
+   std::cout << std::endl;
+   f.print();
 }

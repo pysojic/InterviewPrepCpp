@@ -37,8 +37,9 @@ namespace pysojic
         void push_back(const T& obj);
         void push_back(T&& obj);
         void pop_front();
-        T& front() { return m_Head->m_Data; }
-        T& back() { return m_Tail->m_Data; }
+        T& front() noexcept { return m_Head->m_Data; }
+        T& back() noexcept { return m_Tail->m_Data; }
+        Node<T>* get() noexcept { return m_Head; }
         void clear();
         template <typename... Args>
         void emplace_back(Args&&... args);
@@ -49,6 +50,7 @@ namespace pysojic
         const T& back() const { return m_Tail->m_Data; }
         size_t size() const noexcept { return m_Size; }
         void print() const;
+        void reverse_print(const Node<T>* p) const;
 
     private:
         Node<T>* m_Head;
@@ -320,6 +322,21 @@ namespace pysojic
     }
 
     template<typename T>
+    void ForwardList<T>::clear()
+    {
+        Node<T>* curr = m_Head;
+        while(curr)
+        {
+            Node<T>* next = curr->m_Next;
+            delete curr;
+            curr = next;
+        }
+
+        m_Head = nullptr;
+        m_Tail = nullptr;
+    }
+
+    template<typename T>
     void ForwardList<T>::print() const
     {
         if (m_Head)
@@ -336,18 +353,13 @@ namespace pysojic
     }
 
     template<typename T>
-    void ForwardList<T>::clear()
+    void ForwardList<T>::reverse_print(const Node<T>* p) const
     {
-        Node<T>* curr = m_Head;
-        while(curr)
-        {
-            Node<T>* next = curr->m_Next;
-            delete curr;
-            curr = next;
-        }
-
-        m_Head = nullptr;
-        m_Tail = nullptr;
+        if (p == nullptr)
+            return;
+        
+        reverse_print(p->m_Next);
+        std::cout << p->m_Data << ',';
     }
 }
 
