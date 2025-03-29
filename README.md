@@ -13,4 +13,4 @@ This project is solely for training purposes and should not be viewed as an atte
 
 ## Getting Started
 
-Feel free to explore the repository, run the code, and adapt it for your own learning journey. Contributions that enhance understanding and offer educational value are welcome, but please keep in mind the training nature of this project.
+Feel free to explore the repository, run the code, and adapt it. Contributions that enhance understanding and offer educational value are welcome!
