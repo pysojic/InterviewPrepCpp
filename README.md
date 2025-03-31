@@ -9,7 +9,7 @@ This repository is a collection of various implementations of containers and oth
 
 ## Disclaimer
 
-This project is solely for training purposes and should not be viewed as an attempt to improve or replace the Standard Template Library (STL). The implementations here are meant for personal exploration and are not optimized for production use.
+This project is solely for training purposes and should (obviously) not be viewed as an attempt to improve or replace the Standard Template Library (STL). The implementations here are meant for personal exploration and are not optimized for production use.
 
 ## Getting Started
 
