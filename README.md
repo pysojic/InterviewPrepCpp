@@ -1,6 +1,6 @@
 # C++ Container and Construct Implementations
 
-This repository is a collection of various implementations of containers and other C++ constructs. The primary goal is to serve as a personal training resource for exploring and understanding C++ programming concepts and techniques.
+This repository is a collection of various implementations of containers and other C++ constructs. The primary goal is to serve as a training resource for exploring and understanding C++ programming concepts and techniques.
 
 ## Overview
 
