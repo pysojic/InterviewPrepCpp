@@ -78,6 +78,11 @@ decltype(auto) add(Args&&... args)
 
 int main()
 {
+    using CharTypes = std::tuple<char16_t, char32_t, unsigned char>;
+    using NumTypes = std::tuple<int, unsigned int, long, long long>;
     std::cout << Length<CharTypes>::value << std::endl;
+    using CombinedTypes = Append<CharTypes, NumTypes>::type;
+    std::cout << Length<CombinedTypes>::value << std::endl;
 
+    std::cout << Dimension<int>::value << std::endl;
 }

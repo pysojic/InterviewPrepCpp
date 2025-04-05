@@ -76,6 +76,7 @@
         "stop_token": "cpp",
         "system_error": "cpp",
         "thread": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "any": "cpp"
     }
 }
