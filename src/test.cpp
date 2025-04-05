@@ -15,6 +15,7 @@
 #include "Containers/HashMap.hpp"
 #include "Containers/OpenAddressingHashMap.hpp"
 #include "Utilities/Any.hpp"
+#include "Utilities/CompileTimeFunctions.hpp"
 
 struct testClass
 {
@@ -69,11 +70,14 @@ void test()
     sp.unlock();
 }
 
+template <typename... Args>
+decltype(auto) add(Args&&... args)
+{
+    return (std::forward<Args>(args) + ...);
+}
+
 int main()
 {
-   pysojic::ForwardList<int> f = {1,2,3,4,5,6,6,7};
+    std::cout << Length<CharTypes>::value << std::endl;
 
-   f.reverse_print(f.get());
-   std::cout << std::endl;
-   f.print();
 }
