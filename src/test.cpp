@@ -34,6 +34,8 @@ int main()
     static_assert(Min<CompileTimeVector<3,2,1>>::value == 1);
     static_assert(std::is_same_v<Insert<5, CompileTimeVector<4,6>>::type, CompileTimeVector<4,5,6>>);
     static_assert(std::is_same_v<InsertionSort<CompileTimeVector<2,4,3,1>>::type, CompileTimeVector<1,2,3,4>>);
+    static_assert(std::is_same_v<AppendVector<CompileTimeVector<1,2>, CompileTimeVector<3,4>>::type, CompileTimeVector<1,2,3,4>>);
+    static_assert(std::is_same_v<Unique<CompileTimeVector<1,1,2,2,2,3,4>>::type, CompileTimeVector<1,2,3,4>>);
 
     std::cout << Dimension<int>::value << std::endl;
 }

@@ -241,3 +241,40 @@ struct InsertionSort<Seq<Head1, Head2, Tail...>>
 
     using type = typename Insert<Head1, TailSorted>::type;
 };
+
+template<typename Vec1, typename Vec2>
+struct AppendVector;
+
+template <template<int...> class Vec1, int... Args1, template<int...> class Vec2, int... Args2>
+struct AppendVector<Vec1<Args1...>, Vec2<Args2...>>
+{
+    using type = Vec1<Args1..., Args2...>;
+};
+
+//---------- Unique ----------
+
+template <typename Seq>
+struct Unique;
+
+template <template<int...> class Seq>
+struct Unique<Seq<>>
+{
+    using type = Seq<>;
+};
+
+template <template<int...> class Seq, int Head>
+struct Unique< Seq<Head>> {
+    using type = Seq<Head>;
+};
+template <template<int...> class Seq, int Head, int... Tail>
+struct Unique<Seq<Head, Head, Tail...>>
+{
+    using type = typename Unique<Seq<Head, Tail...>>::type;
+};
+
+template <template<int...> class Seq, int Head1, int Head2, int... Tail>
+struct Unique<Seq<Head1, Head2, Tail...>>
+{
+    using TailUnique = typename Unique< Seq<Head2, Tail...> >::type;
+    using type = Prepend_t< Head1, TailUnique >;
+};
