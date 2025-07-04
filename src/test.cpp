@@ -29,6 +29,11 @@ int main()
     static_assert(std::is_same_v<RemoveAll<9, CompileTimeVector<1,9,2,9,3,9>>::type, CompileTimeVector<1,2,3>>);
     static_assert(Length_t<CompileTimeVector<>> == 0);
     static_assert(Length_t<CompileTimeVector<1,2,3>> == 3);
+    static_assert(Min<CompileTimeVector<3,1,2>>::value == 1);
+    static_assert(Min<CompileTimeVector<1,2,3>>::value == 1);
+    static_assert(Min<CompileTimeVector<3,2,1>>::value == 1);
+    static_assert(std::is_same_v<Insert<5, CompileTimeVector<4,6>>::type, CompileTimeVector<4,5,6>>);
+    static_assert(std::is_same_v<Sort<CompileTimeVector<2,4,3,1>>::type, CompileTimeVector<1,2,3,4>>);
 
     std::cout << Dimension<int>::value << std::endl;
 }

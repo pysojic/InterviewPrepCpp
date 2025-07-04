@@ -174,3 +174,70 @@ struct Length<Seq<Head, Tail...>>
 
 template<typename Seq>
 static constexpr std::size_t Length_t = Length<Seq>::value;
+
+//---------- Min ----------
+
+template <typename Seq>
+struct Min;
+
+template <template<int...> class Seq, int N>
+struct Min<Seq<N>> {
+    static constexpr int value = N;
+};
+
+
+template <template<int...> class Seq, int First, int Second, int... Rest>
+struct Min<Seq<First, Second, Rest...>> 
+{
+    // Compute the minimum of the tail (Second, Rest...)
+    static constexpr int tail_min = Min<Seq<Second, Rest...>>::value;
+    // The overall minimum is the lesser of First and tail_min
+    static constexpr int value = First < tail_min ? First : tail_min;
+};
+
+//---------- Insert ----------
+
+template<int Value, typename Seq>
+struct Insert;
+
+template<int Value, template<int...> class Seq>
+struct Insert<Value, Seq<>>
+{
+    using type = Seq<Value>;
+};
+
+template<int Value, template<int...> class Seq, int Head, int... Tail>
+struct Insert<Value, Seq<Head, Tail...>>
+{
+    static constexpr bool comp = (Value <= Head);
+    using TailInserted = typename Insert<Value, Seq<Tail...>>::type;
+
+    using type = std::conditional_t<comp,
+                Seq<Value, Head, Tail...>,
+                typename Prepend<Head, TailInserted>::type>;
+};
+
+//---------- Sort ----------
+
+template <typename Seq>
+struct Sort;
+
+template <template<int...> class Seq>
+struct Sort<Seq<>>
+{
+    using type = Seq<>;
+};
+
+template <template<int...> class Seq, int Head>
+struct Sort<Seq<Head>>
+{
+    using type = Seq<Head>;
+};
+
+template <template<int...> class Seq, int Head1, int Head2, int... Tail>
+struct Sort<Seq<Head1, Head2, Tail...>>
+{
+    using TailSorted = typename Sort<Seq<Head2, Tail...>>::type;
+
+    using type = Insert<Head1, TailSorted>::type;
+};
