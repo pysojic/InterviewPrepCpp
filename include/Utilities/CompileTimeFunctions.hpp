@@ -217,27 +217,27 @@ struct Insert<Value, Seq<Head, Tail...>>
                 typename Prepend<Head, TailInserted>::type>;
 };
 
-//---------- Sort ----------
+//---------- InsertionSort ----------
 
 template <typename Seq>
-struct Sort;
+struct InsertionSort;
 
 template <template<int...> class Seq>
-struct Sort<Seq<>>
+struct InsertionSort<Seq<>>
 {
     using type = Seq<>;
 };
 
 template <template<int...> class Seq, int Head>
-struct Sort<Seq<Head>>
+struct InsertionSort<Seq<Head>>
 {
     using type = Seq<Head>;
 };
 
 template <template<int...> class Seq, int Head1, int Head2, int... Tail>
-struct Sort<Seq<Head1, Head2, Tail...>>
+struct InsertionSort<Seq<Head1, Head2, Tail...>>
 {
-    using TailSorted = typename Sort<Seq<Head2, Tail...>>::type;
+    using TailSorted = typename InsertionSort<Seq<Head2, Tail...>>::type;
 
-    using type = Insert<Head1, TailSorted>::type;
+    using type = typename Insert<Head1, TailSorted>::type;
 };
