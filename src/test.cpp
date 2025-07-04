@@ -36,6 +36,8 @@ int main()
     static_assert(std::is_same_v<InsertionSort<CompileTimeVector<2,4,3,1>>::type, CompileTimeVector<1,2,3,4>>);
     static_assert(std::is_same_v<AppendVector<CompileTimeVector<1,2>, CompileTimeVector<3,4>>::type, CompileTimeVector<1,2,3,4>>);
     static_assert(std::is_same_v<Unique<CompileTimeVector<1,1,2,2,2,3,4>>::type, CompileTimeVector<1,2,3,4>>);
+    static_assert(std::is_same_v<Set<2,1,3,1,2,3>::type, Set<1,2,3>::type>);
+    static_assert(std::is_same_v<SetFrom<CompileTimeVector<2,1,3,1,2,3>>::type, Set<1,2,3>::type>);
 
     std::cout << Dimension<int>::value << std::endl;
 }

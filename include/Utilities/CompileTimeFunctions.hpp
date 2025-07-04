@@ -278,3 +278,20 @@ struct Unique<Seq<Head1, Head2, Tail...>>
     using TailUnique = typename Unique< Seq<Head2, Tail...> >::type;
     using type = Prepend_t< Head1, TailUnique >;
 };
+
+//---------- Set ----------
+template <int... Elem>
+struct Set
+{
+    using SortedSet = typename InsertionSort<Set<Elem...>>::type;
+    using type = typename Unique<SortedSet>::type;
+};
+
+template <typename Seq>
+struct SetFrom;
+
+template <template<int...> class Seq, int... Args>
+struct SetFrom<Seq<Args...>>
+{
+    using type = typename Set<Args...>::type;
+};
