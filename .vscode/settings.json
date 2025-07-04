@@ -77,6 +77,8 @@
         "system_error": "cpp",
         "thread": "cpp",
         "functional": "cpp",
-        "any": "cpp"
+        "any": "cpp",
+        "numeric": "cpp",
+        "text_encoding": "cpp"
     }
 }

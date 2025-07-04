@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "cStandard": "c17",
+            "cppStandard": "c++23",
+            "intelliSenseMode": "macos-gcc-arm64",
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "compilerPath": "/opt/homebrew/bin/g++-14",
+            "compilerArgs": [
+                "-I include"
+            ]
+        }
+    ],
+    "version": 4
+}
