@@ -3,6 +3,40 @@
 #include <tuple>
 #include <type_traits>
 
+template<int N, int D, bool stop = (D*D > N)>
+struct IsPrimeUtil;
+
+template<int N, int D>
+struct IsPrimeUtil<N, D, true> 
+{
+    static constexpr bool value = true;
+};
+
+template<int N, int D>
+struct IsPrimeUtil<N, D, false> 
+{
+    static constexpr bool divisible = (N % D == 0);
+    static constexpr bool value = divisible ? false : IsPrimeUtil< N, D+2 >::value;
+};
+
+template<int N>
+struct IsPrime 
+{
+    static constexpr bool value = (N < 2) ? false : (N % 2 == 0) ? false : IsPrimeUtil<N,3>::value;
+};
+
+template<> 
+struct IsPrime<2> 
+{ 
+    static constexpr bool value = true; 
+};
+template<> 
+struct IsPrime<3> 
+{ 
+    static constexpr bool value = true; 
+};
+
+
 // Function that returns the size of a tuple at compile time
 
 template <typename TList>
@@ -242,13 +276,86 @@ struct InsertionSort<Seq<Head1, Head2, Tail...>>
     using type = typename Insert<Head1, TailSorted>::type;
 };
 
+//---------- Concat ----------
+
 template<typename Vec1, typename Vec2>
-struct AppendVector;
+struct Concat2;
 
 template <template<int...> class Vec1, int... Args1, template<int...> class Vec2, int... Args2>
-struct AppendVector<Vec1<Args1...>, Vec2<Args2...>>
+struct Concat2<Vec1<Args1...>, Vec2<Args2...>>
 {
     using type = Vec1<Args1..., Args2...>;
+};
+
+template<typename... Vecs>
+struct Concat;
+
+template<template <int...> class Vec1, int... Args1>
+struct Concat<Vec1<Args1...>>
+{
+    using type = Vec1<Args1...>;
+};
+
+template<template <int...> class Vec1, int... Args1, template<int...> class Vec2, int... Args2>
+struct Concat<Vec1<Args1...>, Vec2<Args2...>>
+{
+    using type = Vec1<Args1..., Args2...>;
+};
+
+template<typename Vec1, typename Vec2, typename... Rest>
+struct Concat< Vec1, Vec2, Rest... > 
+{
+  using merged12 = typename Concat<Vec1, Vec2>::type;
+  using type     = typename Concat< merged12, Rest... >::type;
+};
+
+//---------- Partition ----------
+
+template <typename Seq, int Pivot>
+struct Partition;
+
+template <template<int...> class Seq, int Pivot>
+struct Partition<Seq<>, Pivot>
+{
+    using less = Seq<>;
+    using ge = Seq<>;
+};
+
+template <template<int...> class Seq, int Head, int... Tail, int Pivot>
+struct Partition<Seq<Head, Tail...>, Pivot>
+{
+    static constexpr bool comp = (Head < Pivot);
+    using part = Partition<Seq<Tail...>, Pivot>;
+
+    using less = std::conditional_t<comp, typename Concat<Seq<Head>, typename part::less>::type, typename part::less>;
+    using ge = std::conditional_t<comp, typename part::ge, typename Concat<Seq<Head>, typename part::ge>::type>; 
+
+};
+
+//---------- QuickSort ----------
+
+template<typename Seq>
+struct QuickSort;
+
+template <template<int...> class Seq>
+struct QuickSort<Seq<>>
+{
+    using type = Seq<>;
+};
+
+template <template<int...> class Seq, int Head>
+struct QuickSort<Seq<Head>>
+{
+    using type = Seq<Head>;
+};
+
+template <template<int...> class Seq, int Pivot, int... Tail>
+struct QuickSort<Seq<Pivot, Tail...>>
+{
+    using parts = Partition<Seq<Tail...>, Pivot>;
+    using sorted_less = typename QuickSort< typename parts::less >::type;
+    using sorted_ge = typename QuickSort< typename parts::ge>::type;
+    using type = typename Concat<sorted_less, Seq<Pivot>, sorted_ge>::type;
 };
 
 //---------- Unique ----------
@@ -294,4 +401,22 @@ template <template<int...> class Seq, int... Args>
 struct SetFrom<Seq<Args...>>
 {
     using type = typename Set<Args...>::type;
+};
+
+template<int N, typename Seq>
+struct Get;
+
+template<template<int...> class Seq, int Head, int... Tail>
+struct Get<0, Seq<Head, Tail...>>
+{
+    static constexpr int value = Head;
+};
+
+template<int N, template<int...> class Seq, int Head, int... Tail>
+struct Get<N, Seq<Head, Tail...>>
+{
+    static_assert(N > 0, "Error: N should be a positive integer");
+    static_assert(N <= sizeof...(Tail),
+                  "Get<N,Seq>: index out of range");
+    static constexpr int value = Get<N - 1, Seq<Tail...>>::value;
 };
