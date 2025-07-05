@@ -1,4 +1,4 @@
-# C++ Container and Construct Implementations
+# Commonly asked C++ constructs in interviews
 
 This repository is a collection of various implementations of containers and other C++ constructs. The primary goal is to serve as a training resource for exploring and understanding C++ programming concepts and techniques.
 
