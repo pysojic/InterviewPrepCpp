@@ -207,7 +207,7 @@ struct Length<Seq<Head, Tail...>>
 };
 
 template<typename Seq>
-static constexpr std::size_t Length_t = Length<Seq>::value;
+static constexpr std::size_t Length_v = Length<Seq>::value;
 
 //---------- Min ----------
 
@@ -277,15 +277,6 @@ struct InsertionSort<Seq<Head1, Head2, Tail...>>
 };
 
 //---------- Concat ----------
-
-template<typename Vec1, typename Vec2>
-struct Concat2;
-
-template <template<int...> class Vec1, int... Args1, template<int...> class Vec2, int... Args2>
-struct Concat2<Vec1<Args1...>, Vec2<Args2...>>
-{
-    using type = Vec1<Args1..., Args2...>;
-};
 
 template<typename... Vecs>
 struct Concat;
@@ -403,20 +394,114 @@ struct SetFrom<Seq<Args...>>
     using type = typename Set<Args...>::type;
 };
 
+//---------- Get ----------
+
 template<int N, typename Seq>
-struct Get;
+struct GetValue;
 
 template<template<int...> class Seq, int Head, int... Tail>
-struct Get<0, Seq<Head, Tail...>>
+struct GetValue<0, Seq<Head, Tail...>>
 {
     static constexpr int value = Head;
 };
 
 template<int N, template<int...> class Seq, int Head, int... Tail>
-struct Get<N, Seq<Head, Tail...>>
+struct GetValue<N, Seq<Head, Tail...>>
 {
     static_assert(N > 0, "Error: N should be a positive integer");
     static_assert(N <= sizeof...(Tail),
                   "Get<N,Seq>: index out of range");
-    static constexpr int value = Get<N - 1, Seq<Tail...>>::value;
+    static constexpr int value = GetValue<N - 1, Seq<Tail...>>::value;
 };
+
+template<int N, typename Seq>
+struct GetIndex;
+
+template<int N, template<int...> class Seq>
+struct GetIndex<N, Seq<>>
+{
+    static constexpr int value = -1;
+};
+
+template<int N, template<int...> class Seq, int... Tail>
+struct GetIndex<N, Seq<N, Tail...>>
+{
+    static constexpr int value = 0;
+};
+
+template<int N, template<int...> class Seq, int Head, int... Tail>
+struct GetIndex<N, Seq<Head, Tail...>>
+{
+    static constexpr int sub = GetIndex<N, Seq<Tail...>>::value;
+    static constexpr int value = (sub < 0 ? -1 : (sub + 1));
+};
+
+//---------- BisectLeft ----------
+
+template<int L, int R, int N, template<int...> class Seq, int... T>
+static constexpr int bisectLeftLR(Seq<T...> haystack)
+{
+    if constexpr (L >= R)
+    {
+        return L;
+    }
+    else
+    {
+        constexpr int Mid = (L + R) / 2;
+        if constexpr (GetValue<Mid, decltype(haystack)>::value < N)
+        {
+            return bisectLeftLR<Mid+1, R, N>(haystack);
+        }
+        else
+        {
+            return bisectLeftLR<L, Mid, N>(haystack);
+        }
+    }
+};
+
+template<int N, typename Seq>
+struct BisectLeft;
+
+template<int N, template<int...> class Seq, int... T>
+struct BisectLeft<N, Seq<T...>>
+{
+    static constexpr int value = bisectLeftLR<0, sizeof...(T), N>(Seq<T...>{});
+};
+
+//---------- Run Length Encoding ----------
+
+template<int...>
+struct RLE;
+
+template<>
+struct RLE<>
+{
+    using type = CompileTimeVector<>;
+};
+
+template<int H, int... T>
+struct RLE<H, T...>
+{
+    template<typename Acc, int Current, int CurrentCount, int... List>
+    struct Helper;
+
+    template<typename Acc, int Current, int CurrentCount>
+    struct Helper<Acc, Current, CurrentCount>
+    {
+        using type = Concat<Acc, CompileTimeVector<CurrentCount, Current>>::type;
+    };
+
+    template<typename Acc, int Current, int CurrentCount, int Head, int... Tail>
+    struct Helper<Acc, Current, CurrentCount, Head, Tail...>
+    {
+        using type = std::conditional_t<Current == Head,
+                        Helper<Acc, Current, CurrentCount + 1, Tail...>,
+                        Helper<typename Concat<Acc, CompileTimeVector<CurrentCount, Current>>::type, Head, 1, Tail...>
+                     >::type;
+    };
+
+    using type = Helper<CompileTimeVector<>, H, 0, H, T...>::type;
+};
+
+
+
