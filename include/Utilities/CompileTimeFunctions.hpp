@@ -215,7 +215,8 @@ template <typename Seq>
 struct Min;
 
 template <template<int...> class Seq, int N>
-struct Min<Seq<N>> {
+struct Min<Seq<N>> 
+{
     static constexpr int value = N;
 };
 
@@ -503,5 +504,20 @@ struct RLE<H, T...>
     using type = Helper<CompileTimeVector<>, H, 0, H, T...>::type;
 };
 
+//---------- InsertAt ----------
 
+template<int Value, int Index, typename Seq>
+struct InsertAt;
 
+template<int Value, template<int...> class Seq, int... Tail>
+struct InsertAt<Value, 0, Seq<Tail...>>
+{
+    using type = Prepend_t<Value, Seq<Tail...>>;
+};
+
+template<int Value, int Index, template<int...> class Seq, int Head, int... Tail>
+requires(Index > 0)
+struct InsertAt<Value, Index, Seq<Head, Tail...>>
+{
+    using type = Prepend_t<Head, typename InsertAt<Value, Index - 1, Seq<Tail...>>::type>;
+};

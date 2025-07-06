@@ -32,7 +32,8 @@ int main()
     static_assert(BisectLeft<2, CompileTimeVector<0,2,2,2,2,2>>::value == 1);
     static_assert(std::is_same_v<RLE<2,2,2,2>::type, CompileTimeVector<4,2>>);
     static_assert(std::is_same_v<RLE<2,2,2,2,3>::type, CompileTimeVector<4,2,1,3>>);
-
-    std::cout << GetIndex<6, CompileTimeVector<1,2,3>>::value << std::endl;
-    // std::cout << GetValue<0, CompileTimeVector<1,2,3>>::value;
+    static_assert(std::is_same_v<InsertAt<3, 0, CompileTimeVector<4,5,6>>::type, CompileTimeVector<3,4,5,6>>);
+    static_assert(std::is_same_v<InsertAt<3, 1, CompileTimeVector<4,5,6>>::type, CompileTimeVector<4,3,5,6>>);
+    static_assert(std::is_same_v<InsertAt<3, 2, CompileTimeVector<4,5,6>>::type, CompileTimeVector<4,5,3,6>>);
+    static_assert(std::is_same_v<InsertAt<3, 3, CompileTimeVector<4,5,6>>::type, CompileTimeVector<4,5,6,3>>);
 }
