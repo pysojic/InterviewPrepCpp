@@ -3,6 +3,14 @@
 #include <tuple>
 #include <vector>
 #include <stdexcept>
+#include <climits>
+#include <optional>
+
+// See Rigtorp implementation for a more complete/fine-tuned impl at https://github.com/rigtorp/HashMap
+
+// I use an initial capacity that is a power of two to replace the expensive % when hashing a key by a bitwise &
+#define INITIAL_BUCKET_COUNT 16
+static_assert((INITIAL_BUCKET_COUNT & (INITIAL_BUCKET_COUNT - 1)) == 0, "BUCKET_COUNT should be a power of 2!");
 
 // The following uses linear probing
 namespace pysojic
@@ -10,6 +18,7 @@ namespace pysojic
     template <typename Key, typename Value, typename HashFunction = std::hash<Key>>
     class OpenAddressingHashMap
     {
+        static_assert(std::is_default_constructible_v<Value>, "Value not default constructible!");
         class Entry
         {
             friend class OpenAddressingHashMap;
@@ -42,8 +51,7 @@ namespace pysojic
         Value& operator[](const Key& key);
         void rehash(size_t new_size);
 
-        size_t size() const noexcept { return m_NumElems; }
-        size_t capacity() const noexcept { return m_Arr.capacity(); }
+        size_t bucket_count() const noexcept { return m_Arr.size(); }
         double load_factor() const noexcept { return static_cast<double>(m_NumElems) / m_Arr.size(); }
 
     private:
@@ -61,18 +69,19 @@ namespace pysojic
     template <typename Key, typename Value, typename HashFunction>
     size_t OpenAddressingHashMap<Key, Value, HashFunction>::hash_function(const Key& key) const
     {
-        return HashFunction{}(key) % m_Arr.size();
+        return HashFunction{}(key) & (m_Arr.size() - 1);
     }
 
     template <typename Key, typename Value, typename HashFunction>
     size_t OpenAddressingHashMap<Key, Value, HashFunction>::hash_function(const Key& key, size_t table_size) const
     {
-        return HashFunction{}(key) % table_size;
+        return HashFunction{}(key) & (table_size - 1);
     }
 
+    // I use a power of two
     template <typename Key, typename Value, typename HashFunction>
     OpenAddressingHashMap<Key, Value, HashFunction>::OpenAddressingHashMap()
-        : m_Arr(19), m_NumElems(0), m_MaxLoadFactor(0.8)
+        : m_Arr(INITIAL_BUCKET_COUNT), m_NumElems(0), m_MaxLoadFactor(0.8)
     {
     }
 
@@ -89,7 +98,7 @@ namespace pysojic
                 size_t index = hash_function(m_Arr[i].key_, new_size);
                 while (new_arr[index].state_ == Entry::State::OCCUPIED)
                 {
-                    index = (index + 1) % new_size;
+                    index = (index + 1) & (new_size - 1);
                 }
                 new_arr[index] = std::move(m_Arr[i]);
             }
@@ -108,22 +117,22 @@ namespace pysojic
         
         size_t index = hash_function(key);
         size_t start = index;
-        size_t first_deleted = m_Arr.size(); // an invalid index as a marker
+        std::optional<size_t> first_deleted; // an invalid index as a marker
 
         while (true)
         {
             if (m_Arr[index].state_ == Entry::State::EMPTY)
             {
                 // If we saw a deleted slot earlier, use that instead
-                if (first_deleted != m_Arr.size())
+                if (first_deleted)
                 {
-                    index = first_deleted;
+                    index = first_deleted.value();
                 }
                 m_Arr[index] = Entry(key, val);
                 ++m_NumElems;
                 return;
             }
-            else if (m_Arr[index].state_ == Entry::State::DELETED && first_deleted == m_Arr.size())
+            else if (m_Arr[index].state_ == Entry::State::DELETED && !first_deleted)
             {
                 first_deleted = index;
             }
@@ -132,7 +141,7 @@ namespace pysojic
                 m_Arr[index].value_ = val;
                 return;
             }
-            index = (index + 1) % m_Arr.size();
+            index = (index + 1) & (m_Arr.size() - 1);
             if (index == start)
             {
                 // Should never happen because we rehash before full
@@ -152,22 +161,22 @@ namespace pysojic
         
         size_t index = hash_function(key);
         size_t start = index;
-        size_t first_deleted = m_Arr.size();
+        std::optional<size_t> first_deleted;
 
         while (true)
         {
             if (m_Arr[index].state_ == Entry::State::EMPTY)
             {
                 // Not found; insert new element
-                if (first_deleted != m_Arr.size())
+                if (first_deleted)
                 {
-                    index = first_deleted;
+                    index = first_deleted.value();
                 }
                 m_Arr[index] = Entry(key, Value{}); // Default-constructed value
                 ++m_NumElems;
                 return m_Arr[index].value_;
             }
-            else if (m_Arr[index].state_ == Entry::State::DELETED && first_deleted == m_Arr.size())
+            else if (m_Arr[index].state_ == Entry::State::DELETED && !first_deleted)
             {
                 first_deleted = index;
             }
@@ -175,7 +184,7 @@ namespace pysojic
             {
                 return m_Arr[index].value_;
             }
-            index = (index + 1) % m_Arr.size();
+            index = (index + 1) & (m_Arr.size() - 1);
             if (index == start)
             {
                 // Should never happen if rehashing is working correctly
@@ -199,7 +208,7 @@ namespace pysojic
                 return;
             }
 
-            index = (index + 1) % m_Arr.size();
+            index = (index + 1) & (m_Arr.size() - 1);
             
             if (index == start)
                 break;
