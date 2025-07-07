@@ -36,4 +36,5 @@ int main()
     static_assert(std::is_same_v<InsertAt<3, 1, CompileTimeVector<4,5,6>>::type, CompileTimeVector<4,3,5,6>>);
     static_assert(std::is_same_v<InsertAt<3, 2, CompileTimeVector<4,5,6>>::type, CompileTimeVector<4,5,3,6>>);
     static_assert(std::is_same_v<InsertAt<3, 3, CompileTimeVector<4,5,6>>::type, CompileTimeVector<4,5,6,3>>);
+    static_assert(std::is_same_v<Zip<CompileTimeVector<1,2,3>, CompileTimeVector<4,5,6>, CompileTimeVector<1,2,3>>::type, CompileTimeVector<4,20,54>>);
 }

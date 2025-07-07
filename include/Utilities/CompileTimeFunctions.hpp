@@ -521,3 +521,29 @@ struct InsertAt<Value, Index, Seq<Head, Tail...>>
 {
     using type = Prepend_t<Head, typename InsertAt<Value, Index - 1, Seq<Tail...>>::type>;
 };
+
+//---------- Zip ----------
+
+template <typename Seq1, typename Seq2>
+struct Zip2;
+
+template<template<int...> class Seq1, int... Args1, template<int...> class Seq2, int... Args2>
+struct Zip2<Seq1<Args1...>, Seq2<Args2...>>
+{
+    using type = Seq1<(Args1 * Args2)...>;
+};
+
+template<typename... Seqs>
+struct Zip;
+
+template<typename Seq>
+struct Zip<Seq>
+{
+    using type = Seq;
+};
+
+template<typename Seq1, typename...Seqs>
+struct Zip<Seq1, Seqs...>
+{
+    using type = typename Zip2<Seq1, typename Zip<Seqs...>::type>::type;
+};
