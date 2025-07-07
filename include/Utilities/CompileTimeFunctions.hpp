@@ -76,7 +76,7 @@ struct Dimension
 template <typename T>
 struct Dimension<T[]>
 {
-    static constexpr size_t value = 1 + Dimension<T>::value;
+    static constexpr size_t value = 1;
 };
 
 template <typename T, size_t N>
@@ -480,28 +480,28 @@ struct RLE<>
     using type = CompileTimeVector<>;
 };
 
-template<int H, int... T>
-struct RLE<H, T...>
+template<int Head, int... Tail>
+struct RLE<Head, Tail...>
 {
-    template<typename Acc, int Current, int CurrentCount, int... List>
+    template<typename AccumulatedRuns, int CurrentValue, int CurrentCount, int... List>
     struct Helper;
 
-    template<typename Acc, int Current, int CurrentCount>
-    struct Helper<Acc, Current, CurrentCount>
+    template<typename AccumulatedRuns, int CurrentValue, int CurrentCount>
+    struct Helper<AccumulatedRuns, CurrentValue, CurrentCount>
     {
-        using type = Concat<Acc, CompileTimeVector<CurrentCount, Current>>::type;
+        using type = Concat<AccumulatedRuns, CompileTimeVector<CurrentCount, CurrentValue>>::type;
     };
 
-    template<typename Acc, int Current, int CurrentCount, int Head, int... Tail>
-    struct Helper<Acc, Current, CurrentCount, Head, Tail...>
+    template<typename AccumulatedRuns, int CurrentValue, int CurrentCount, int H, int... T>
+    struct Helper<AccumulatedRuns, CurrentValue, CurrentCount, H, T...>
     {
-        using type = std::conditional_t<Current == Head,
-                        Helper<Acc, Current, CurrentCount + 1, Tail...>,
-                        Helper<typename Concat<Acc, CompileTimeVector<CurrentCount, Current>>::type, Head, 1, Tail...>
+        using type = std::conditional_t<CurrentValue == H,
+                        Helper<AccumulatedRuns, CurrentValue, CurrentCount + 1, T...>,
+                        Helper<typename Concat<AccumulatedRuns, CompileTimeVector<CurrentCount, CurrentValue>>::type, H, 1, T...>
                      >::type;
     };
 
-    using type = Helper<CompileTimeVector<>, H, 0, H, T...>::type;
+    using type = Helper<CompileTimeVector<>, Head, 0, Head, Tail...>::type;
 };
 
 //---------- InsertAt ----------
@@ -524,26 +524,77 @@ struct InsertAt<Value, Index, Seq<Head, Tail...>>
 
 //---------- Zip ----------
 
-template <typename Seq1, typename Seq2>
-struct Zip2;
-
-template<template<int...> class Seq1, int... Args1, template<int...> class Seq2, int... Args2>
-struct Zip2<Seq1<Args1...>, Seq2<Args2...>>
+template<int A, int B>
+struct Plus 
 {
-    using type = Seq1<(Args1 * Args2)...>;
+    static constexpr int value = A + B;
 };
 
-template<typename... Seqs>
+template<int A, int B>
+struct Minus 
+{
+    static constexpr int value = A - B;
+};
+
+template<int A, int B>
+struct Multiply 
+{
+    static constexpr int value = A * B;
+};
+
+template <template<int,int> class Op, typename Seq1, typename Seq2>
+struct Zip2;
+
+template<template<int,int> class Op, template<int...> class Seq1, int... Args1, template<int...> class Seq2, int... Args2>
+struct Zip2<Op, Seq1<Args1...>, Seq2<Args2...>>
+{
+    using type = Seq1<(Op<Args1,Args2>::value)...>;
+};
+
+template<template<int,int> class Op, typename... Seqs>
 struct Zip;
 
-template<typename Seq>
-struct Zip<Seq>
+template<template<int,int> class Op, typename Seq>
+struct Zip<Op, Seq>
 {
     using type = Seq;
 };
 
-template<typename Seq1, typename...Seqs>
-struct Zip<Seq1, Seqs...>
+template<template<int,int> class Op, typename Seq1, typename...Seqs>
+struct Zip<Op, Seq1, Seqs...>
 {
-    using type = typename Zip2<Seq1, typename Zip<Seqs...>::type>::type;
+    using type = typename Zip2<Op, Seq1, typename Zip<Op, Seqs...>::type>::type;
 };
+
+template <int... Elems>
+struct RLE2;
+
+template <>
+struct RLE2<>
+{
+    using type = CompileTimeVector<>;
+};
+
+template<int Head, int... Tail>
+struct RLE2<Head, Tail...>
+{
+    template<typename AccumulatedRuns, int Current, int CurrentCount, int... Rest>
+    struct Util;
+
+    template<typename AccumulatedRuns, int Current, int CurrentCount>
+    struct Util<AccumulatedRuns, Current, CurrentCount>
+    {
+        using type = Concat<AccumulatedRuns, CompileTimeVector<Current, CurrentCount>>::type;
+    };
+
+    template<typename AccumulatedRuns, int Current, int CurrentCount, int First, int... Rest>
+    struct Util<AccumulatedRuns, Current, CurrentCount, First, Rest...>
+    {
+        static constexpr bool comp = (Current == First);
+        using type = std::conditional_t<comp,
+                    typename Util<AccumulatedRuns, Current, CurrentCount + 1, Rest...>::type,
+                    typename Util<typename Concat<AccumulatedRuns, CompileTimeVector<Current, CurrentCount>>::type, First, 1, Rest...>::type>;
+    };
+
+    using type = typename Util<CompileTimeVector<>, Head, 0, Head, Tail...>::type;
+};  
