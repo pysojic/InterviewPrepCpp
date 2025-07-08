@@ -36,7 +36,7 @@ namespace pysojic
         std::vector<std::list<std::pair<Key, Value>>> m_Buckets;
         size_t m_NumElems;
         double m_MaxLoadFactor;
-        inline static size_t m_InitialBucketCount = 19;
+        inline static size_t m_InitialBucketCount = 16;
     };
 
     //------------Implementation--------------
@@ -44,13 +44,13 @@ namespace pysojic
     template <typename Key, typename Value, typename HashFunction>
     size_t HashMap<Key, Value, HashFunction>::hash_function(const Key& key) const
     {
-        return HashFunction{}(key) % m_Buckets.size();
+        return HashFunction{}(key) & (m_Buckets.size() - 1);
     }
 
     template <typename Key, typename Value, typename HashFunction>
     size_t HashMap<Key, Value, HashFunction>::hash_function(const Key& key, size_t newBucketCount) const
     {
-        return HashFunction{}(key) % newBucketCount;
+        return HashFunction{}(key) & (newBucketCount - 1);
     }
 
     template <typename Key, typename Value, typename HashFunction>

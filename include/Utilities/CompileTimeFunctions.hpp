@@ -3,17 +3,19 @@
 #include <tuple>
 #include <type_traits>
 
-template<int N, int D, bool stop = (D*D > N)>
+template<int N, int D>
 struct IsPrimeUtil;
 
 template<int N, int D>
-struct IsPrimeUtil<N, D, true> 
+requires(D*D > N)
+struct IsPrimeUtil<N, D> 
 {
     static constexpr bool value = true;
 };
 
 template<int N, int D>
-struct IsPrimeUtil<N, D, false> 
+requires(D*D <= N)
+struct IsPrimeUtil<N, D> 
 {
     static constexpr bool divisible = (N % D == 0);
     static constexpr bool value = divisible ? false : IsPrimeUtil< N, D+2 >::value;
@@ -565,36 +567,3 @@ struct Zip<Op, Seq1, Seqs...>
 {
     using type = typename Zip2<Op, Seq1, typename Zip<Op, Seqs...>::type>::type;
 };
-
-template <int... Elems>
-struct RLE2;
-
-template <>
-struct RLE2<>
-{
-    using type = CompileTimeVector<>;
-};
-
-template<int Head, int... Tail>
-struct RLE2<Head, Tail...>
-{
-    template<typename AccumulatedRuns, int Current, int CurrentCount, int... Rest>
-    struct Util;
-
-    template<typename AccumulatedRuns, int Current, int CurrentCount>
-    struct Util<AccumulatedRuns, Current, CurrentCount>
-    {
-        using type = Concat<AccumulatedRuns, CompileTimeVector<Current, CurrentCount>>::type;
-    };
-
-    template<typename AccumulatedRuns, int Current, int CurrentCount, int First, int... Rest>
-    struct Util<AccumulatedRuns, Current, CurrentCount, First, Rest...>
-    {
-        static constexpr bool comp = (Current == First);
-        using type = std::conditional_t<comp,
-                    typename Util<AccumulatedRuns, Current, CurrentCount + 1, Rest...>::type,
-                    typename Util<typename Concat<AccumulatedRuns, CompileTimeVector<Current, CurrentCount>>::type, First, 1, Rest...>::type>;
-    };
-
-    using type = typename Util<CompileTimeVector<>, Head, 0, Head, Tail...>::type;
-};  
