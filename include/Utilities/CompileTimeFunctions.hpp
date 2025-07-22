@@ -3,27 +3,27 @@
 #include <tuple>
 #include <type_traits>
 
-template<int N, int D>
-struct IsPrimeUtil;
-
-template<int N, int D>
-requires(D*D > N)
-struct IsPrimeUtil<N, D> 
-{
-    static constexpr bool value = true;
-};
-
-template<int N, int D>
-requires(D*D <= N)
-struct IsPrimeUtil<N, D> 
-{
-    static constexpr bool divisible = (N % D == 0);
-    static constexpr bool value = divisible ? false : IsPrimeUtil< N, D+2 >::value;
-};
-
 template<int N>
 struct IsPrime 
 {
+    template<int T, int D>
+    struct IsPrimeUtil;
+
+    template<int T, int D>
+    requires(D*D > T)
+    struct IsPrimeUtil<T, D> 
+    {
+        static constexpr bool value = true;
+    };
+
+    template<int T, int D>
+    requires(D*D <= T)
+    struct IsPrimeUtil<T, D> 
+    {
+        static constexpr bool divisible = (T % D == 0);
+        static constexpr bool value = divisible ? false : IsPrimeUtil< T, D+2 >::value;
+    };
+
     static constexpr bool value = (N < 2) ? false : (N % 2 == 0) ? false : IsPrimeUtil<N,3>::value;
 };
 

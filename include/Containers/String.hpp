@@ -147,7 +147,8 @@ void String::append(const char* s)
         // stay in SSO
         std::memcpy(m_sso.buffer + old_len, s, add_len + 1);
         m_sso.size = new_len;
-    } else 
+    } 
+    else 
     {
         // need heap
         std::size_t new_cap = std::max<std::size_t>(new_len, old_len * 2);

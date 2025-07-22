@@ -1,4 +1,5 @@
 #include <iostream>
+#include "Utilities/tests.hpp"
 
 #include "Utilities/CompileTimeFunctions.hpp"
 
@@ -23,7 +24,9 @@ int main()
     static_assert(Min<CompileTimeVector<1,2,3>>::value == 1);
     static_assert(Min<CompileTimeVector<3,2,1>>::value == 1);
     static_assert(std::is_same_v<Insert<5, CompileTimeVector<4,6>>::type, CompileTimeVector<4,5,6>>);
-    static_assert(std::is_same_v<InsertionSort<CompileTimeVector<2,4,3,1>>::type, CompileTimeVector<1,2,3,4>>);
+    static_assert(std::is_same_v<InsertionSort2<CompileTimeVector<2,4,3,1>>::type, CompileTimeVector<1,2,3,4>>);
+    static_assert(std::is_same_v<InsertionSort2<CompileTimeVector<2,4,3,1,7,-8>>::type, CompileTimeVector<-8,1,2,3,4,7>>);
+    static_assert(std::is_same_v<QuickSort2<CompileTimeVector<2,4,3,1,7,-8>>::type, CompileTimeVector<-8,1,2,3,4,7>>);
     static_assert(std::is_same_v<Concat<CompileTimeVector<1,2>, CompileTimeVector<3,4>, CompileTimeVector<5,6>>::type, CompileTimeVector<1,2,3,4,5,6>>);
     static_assert(std::is_same_v<Unique<CompileTimeVector<1,1,2,2,2,3,4>>::type, CompileTimeVector<1,2,3,4>>);
     static_assert(std::is_same_v<Set<2,1,3,1,2,3>::type, Set<1,2,3>::type>);
@@ -51,4 +54,14 @@ int main()
     std::cout << 5 << ": " << IsPrime<5>::value << '\n';
     std::cout << 6 << ": " << IsPrime<6>::value << '\n';
     std::cout << 7 << ": " << IsPrime<7>::value << '\n';
+
+    std::cout << "Fibonacci" << 1 << ": " << Fibonacci<1>::value << '\n';
+    std::cout << "Fibonacci" << 2 << ": " << Fibonacci<2>::value << '\n';
+    std::cout << "Fibonacci" << 3 << ": " << Fibonacci<3>::value << '\n';
+    std::cout << "Fibonacci" << 4 << ": " << Fibonacci<4>::value << '\n';
+    std::cout << "Fibonacci" << 5 << ": " << Fibonacci<5>::value << '\n';
+    std::cout << "Fibonacci" << 6 << ": " << Fibonacci<6>::value << '\n';
+    std::cout << "Fibonacci" << 40 << ": " << Fibonacci<40>::value << '\n';
+
+    print(Vect<1,2,3,4>{});
 }

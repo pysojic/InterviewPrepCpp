@@ -5,6 +5,8 @@
 #include <array>
 
 // Fixed Lock-free Single Producer, Single Consumer Queue
+// Heavily inspired by rigtorp impl here: https://github.com/rigtorp/SPSCQueue
+
 template<typename T, std::size_t Capacity>
 class SPSCQueue {
 public:
