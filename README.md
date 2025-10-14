@@ -61,7 +61,7 @@ This section gathers useful resources — books, blogs, and documentation — th
 
 - [The C++ Programming Language (3rd Edition) — Bjarne Stroustrup](https://lmu.web.psi.ch/docu/manuals/software_manuals/ISO_Cpp/Cpp-Bjarne-Stroustrup.pdf)
 
-- [Concurrency in Action — Anthony Williams](https://beefnoodles.cc/assets/book/C++%20Concurrency%20in%20Action.pdf)
+- [Concurrency in Action — Anthony Williams (2nd Edition)](https://beefnoodles.cc/assets/book/C++%20Concurrency%20in%20Action.pdf)
 
 ### Blogs, Articles
 
@@ -69,7 +69,7 @@ This section gathers useful resources — books, blogs, and documentation — th
   — Language evolution and modern best practices.
 
 - [Agner Fog's Blog](https://agner.org/)
-  — A bit on the more advanced side. Contains a plethora of tips/advices for low-level optimization.
+  — A bit on the advanced side. Contains a plethora of tips/advices for low-level optimization.
 
 - [rigtorp.se](https://rigtorp.se/)
   — A blog by Erik Rigtorp featuring deep dives into performance, benchmarking, data structures, and low-level C++ techniques.
