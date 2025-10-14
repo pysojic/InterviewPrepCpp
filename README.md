@@ -63,7 +63,7 @@ This section gathers useful resources — books, blogs, and documentation — th
 
 - [Concurrency in Action — Anthony Williams](https://beefnoodles.cc/assets/book/C++%20Concurrency%20in%20Action.pdf)
 
-### Blogs & Articles
+### Blogs, Articles & Websites
 
 - [CppReference](https://cppreference.com/)
   — Authoritative reference for the standard library and language features.
