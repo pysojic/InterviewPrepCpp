@@ -78,7 +78,7 @@ This section gathers useful resources — books, blogs, and documentation — th
   — A bit on the more advanced side. Contains a plethora of tips/advices for low-latency optimization.
 
 - [rigtorp.se](https://rigtorp.se/)
-  — A blog by Rigtorp featuring deep dives into performance, benchmarking, data structures, and low-level C++ techniques.
+  — A blog by Erik Rigtorp featuring deep dives into performance, benchmarking, data structures, and low-level C++ techniques.
 
 ### Documentation & Misc
 
