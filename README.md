@@ -80,6 +80,9 @@ This section gathers useful resources — books, blogs, and documentation — th
 - [rigtorp.se](https://rigtorp.se/)
   — A blog by Erik Rigtorp featuring deep dives into performance, benchmarking, data structures, and low-level C++ techniques.
 
+- [getcracked.io](https://www.getcracked.io)
+  — Repository of technical interview questions spanning data structures, algorithms, system design, and more.
+
 ### Documentation & Misc
 
 - [LINUX Man Pages](https://www.kernel.org/doc/man-pages/)
