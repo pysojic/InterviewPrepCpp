@@ -59,7 +59,7 @@ This section gathers useful resources — books, blogs, and documentation — th
 
 - [C++ Templates: The Complete Guide (2nd Edition) — David Vandevoorde, Nicolai M. Josuttis, Douglas Gregor](https://agorism.dev/book/c%2B%2B/David%20Vandevoorde%2C%20Nicolai%20M.%20Josuttis%2C%20Douglas%20Gregor%20-%20C%2B%2B%20Templates_%20The%20Complete%20Guide-Addison-Wesley%20%282017%29.pdf)
 
-- [The C++ Programming Language (4th Edition) — Bjarne Stroustrup](https://lmu.web.psi.ch/docu/manuals/software_manuals/ISO_Cpp/Cpp-Bjarne-Stroustrup.pdf)
+- [The C++ Programming Language (3th Edition) — Bjarne Stroustrup](https://lmu.web.psi.ch/docu/manuals/software_manuals/ISO_Cpp/Cpp-Bjarne-Stroustrup.pdf)
 
 - [Concurrency in Action — Anthony Williams](https://beefnoodles.cc/assets/book/C++%20Concurrency%20in%20Action.pdf)
 
