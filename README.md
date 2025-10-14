@@ -75,7 +75,7 @@ This section gathers useful resources — books, blogs, and documentation — th
   — Language evolution and modern best practices.
 
 - [Agner Fog's Blog](https://agner.org/)
-  — A bit on the more advanced side. Contains a plethora of tips/advices for low-latency optimization.
+  — A bit on the more advanced side. Contains a plethora of tips/advices for low-level optimization.
 
 - [rigtorp.se](https://rigtorp.se/)
   — A blog by Erik Rigtorp featuring deep dives into performance, benchmarking, data structures, and low-level C++ techniques.
