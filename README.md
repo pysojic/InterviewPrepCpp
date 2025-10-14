@@ -83,8 +83,8 @@ This section gathers useful resources — books, blogs, and documentation — th
 - [Johnny’s SW Lab – Performance](https://johnnysswlab.com/category/performance/)
   — Blog posts focused on software performance, profiling techniques, and low-level optimization in C++ and systems development.
 
-- [Preshing – Blog Archives](https://preshing.com/archives/)
-  — A blog by Preshing covering algorithms, lock-free data structures, concurrency, and systems-level programming insights.
+- [Preshing – Blog](https://preshing.com/archives/)
+  — A blog by Jeff Preshing covering algorithms, lock-free data structures, concurrency, and systems-level programming insights.
 
 - [getcracked.io](https://www.getcracked.io)
   — Repository of technical interview questions spanning data structures, algorithms, system design, and more.
