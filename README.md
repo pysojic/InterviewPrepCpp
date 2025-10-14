@@ -63,13 +63,7 @@ This section gathers useful resources — books, blogs, and documentation — th
 
 - [Concurrency in Action — Anthony Williams](https://beefnoodles.cc/assets/book/C++%20Concurrency%20in%20Action.pdf)
 
-### Blogs, Articles & Websites
-
-- [CppReference](https://cppreference.com/)
-  — Authoritative reference for the standard library and language features.
-
-- [LearnCpp](https://www.learncpp.com/)
-  — Good place to start reviewing basic C++ concepts.
+### Blogs, Articles
 
 - [Herb Sutter’s Blog](https://herbsutter.com/)
   — Language evolution and modern best practices.
@@ -86,11 +80,11 @@ This section gathers useful resources — books, blogs, and documentation — th
 - [Preshing – Blog](https://preshing.com/archives/)
   — A blog by Jeff Preshing covering algorithms, lock-free data structures, concurrency, and systems-level programming insights.
 
-- [getcracked.io](https://www.getcracked.io)
-  — Repository of technical interview questions spanning data structures, algorithms, system design, and more.
+### Documentation & Useful Websites
 
-### Documentation & Misc
-
+- [CppReference](https://cppreference.com/)
+  — Authoritative reference for the standard library and language features.
+  
 - [LINUX Man Pages](https://www.kernel.org/doc/man-pages/)
   — Official and comprehensive reference for Linux system calls, library functions, and interfaces.
 
@@ -99,3 +93,9 @@ This section gathers useful resources — books, blogs, and documentation — th
 
 - [Compiler Explorer](https://godbolt.org/)
   — Visualize template instantiations, optimizations, and generated assembly.
+
+- [LearnCpp](https://www.learncpp.com/)
+  — Good place to start reviewing basic C++ concepts.
+
+- [getcracked.io](https://www.getcracked.io)
+  — Repository of technical interview questions spanning data structures, algorithms, system design, and more.
