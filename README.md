@@ -66,24 +66,27 @@ This section gathers useful resources — books, blogs, and documentation — th
 ### Blogs & Articles
 
 - [CppReference](https://cppreference.com/)
- — Authoritative reference for the standard library and language features.
+  — Authoritative reference for the standard library and language features.
 
 - [LearnCpp](https://www.learncpp.com/)
- — Good place to start reviewing basic C++ concepts.
+  — Good place to start reviewing basic C++ concepts.
 
 - [Herb Sutter’s Blog](https://herbsutter.com/)
- — Language evolution and modern best practices.
+  — Language evolution and modern best practices.
 
 - [Agner Fog's Blog](https://agner.org/)
   — A bit on the more advanced side. Contains a plethora of tips/advices for low-latency optimization.
 
+- [rigtorp.se](https://rigtorp.se/)
+  — A blog by Rigtorp featuring deep dives into performance, benchmarking, data structures, and low-level C++ techniques.
+
 ### Documentation & Misc
 
 - [LINUX Man Pages](https://www.kernel.org/doc/man-pages/)
- — Official and comprehensive reference for Linux system calls, library functions, and interfaces.
+  — Official and comprehensive reference for Linux system calls, library functions, and interfaces.
 
 - [ISO C++ Drafts](https://eel.is/c++draft/)
- — For exploring the language standard.
+  — For exploring the language standard.
 
 - [Compiler Explorer](https://godbolt.org/)
- — Visualize template instantiations, optimizations, and generated assembly.
+  — Visualize template instantiations, optimizations, and generated assembly.
