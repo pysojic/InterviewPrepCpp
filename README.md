@@ -51,7 +51,7 @@ You can include individual headers in your own C++ test files or use the provide
 
 ## References & Further Reading
 
-This section gathers useful resources — books, blogs, and documentation — that complement the topics covered in this repository. It serves as a quick reference for deepening your understanding of C++ internals, algorithms, and interview patterns.
+This section collects focused resources on modern C++, systems programming, performance, networking, concurrency, and algorithms. It’s meant as a concise “reading map” for going beyond syntax into how real machines behave, how production C++ is designed and optimized, and how to reason about trade-offs that matter both in interviews and in real-world systems.
 
 ### Books
 #### C++
