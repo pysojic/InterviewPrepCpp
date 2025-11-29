@@ -120,6 +120,8 @@ This section gathers useful resources — books, blogs, and documentation — th
 - [What Every Programmer Should Know About Memory](https://lwn.net/Articles/250967/)
   — Ulrich Drepper’s classic deep dive into RAM, CPU caches, NUMA, and how modern memory hierarchies affect performance and correctness. A must-read if you care about writing cache-friendly, high-performance C/C++ and systems code.
 
+- [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/html/) — A practical, conversational introduction to Unix/POSIX socket programming in C, covering TCP/UDP, IPv4/IPv6, and select/poll/epoll with lots of examples. Perfect for getting from “I kind of know what a socket is” to writing real networked services.
+
 - [What Every Computer Scientist Should Know About Floating-Point Arithmetic](https://www.itu.dk/~sestoft/bachelor/IEEE754_article.pdf)
   — David Goldberg’s definitive tutorial on IEEE 754, rounding, cancellation, and numerical error. Essential to understand why floats “behave weirdly” and how to write numerically robust code.
 
