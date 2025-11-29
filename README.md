@@ -56,59 +56,47 @@ This section gathers useful resources — books, blogs, and documentation — th
 ### Books
 #### C++
 
-- [Effective Modern C++ — Scott Meyers](https://ananyapam7.github.io/resources/C++/Scott_Meyers_Effective_Modern_C++.pdf)  
-  — Item-based guidelines for C++11/14 that teach how to use move semantics, smart pointers, lambdas, auto, and concurrency correctly and idiomatically.
+- [Effective Modern C++ — Scott Meyers](https://ananyapam7.github.io/resources/C++/Scott_Meyers_Effective_Modern_C++.pdf) — Item-based guidelines for C++11/14 that teach how to use move semantics, smart pointers, lambdas, auto, and concurrency correctly and idiomatically.
 
-- [C++ Templates: The Complete Guide (2nd Edition) — David Vandevoorde, Nicolai M. Josuttis, Douglas Gregor](https://agorism.dev/book/c%2B%2B/David%20Vandevoorde%2C%20Nicolai%20M.%20Josuttis%2C%20Douglas%20Gregor%20-%20C%2B%2B%20Templates_%20The%20Complete%20Guide-Addison-Wesley%20%282017%29.pdf)  
-  — Definitive deep dive into templates, from basic syntax to type traits and template metaprogramming, essential for understanding modern generic C++ code.
+- [C++ Templates: The Complete Guide (2nd Edition) — David Vandevoorde, Nicolai M. Josuttis, Douglas Gregor](https://agorism.dev/book/c%2B%2B/David%20Vandevoorde%2C%20Nicolai%20M.%20Josuttis%2C%20Douglas%20Gregor%20-%20C%2B%2B%20Templates_%20The%20Complete%20Guide-Addison-Wesley%20%282017%29.pdf) — Definitive deep dive into templates, from basic syntax to type traits and template metaprogramming, essential for understanding modern generic C++ code.
 
-- [The C++ Programming Language (3rd Edition) — Bjarne Stroustrup](https://lmu.web.psi.ch/docu/manuals/software_manuals/ISO_Cpp/Cpp-Bjarne-Stroustrup.pdf)  
-  — Comprehensive tour of the C++ language and standard library from its creator, ideal as a foundational reference and big-picture overview.
+- [The C++ Programming Language (3rd Edition) — Bjarne Stroustrup](https://lmu.web.psi.ch/docu/manuals/software_manuals/ISO_Cpp/Cpp-Bjarne-Stroustrup.pdf) — Comprehensive tour of the C++ language and standard library from its creator, ideal as a foundational reference and big-picture overview.
 
-- [C++ High Performance, Second Edition: Master the art of optimizing the functioning of your C++ code](https://www.amazon.com.be/High-Performance-Second-optimizing-functioning/dp/1839216549)  
-  — Focuses on writing cache-friendly, branch-efficient, and scalable C++ code, with practical coverage of profiling, memory behavior, concurrency, and low-level tuning.
+- [C++ High Performance, Second Edition: Master the art of optimizing the functioning of your C++ code](https://www.amazon.com.be/High-Performance-Second-optimizing-functioning/dp/1839216549) — Focuses on writing cache-friendly, branch-efficient, and scalable C++ code, with practical coverage of profiling, memory behavior, concurrency, and low-level tuning.
 
-- [Beautiful C++](https://ptgmedia.pearsoncmg.com/images/9780137647842/samplepages/9780137647842_Sample.pdf)  
-  — Emphasizes clear, expressive, and maintainable modern C++ design, showing how to combine language features and idioms to produce elegant, robust code.
+- [Beautiful C++](https://ptgmedia.pearsoncmg.com/images/9780137647842/samplepages/9780137647842_Sample.pdf) — Emphasizes clear, expressive, and maintainable modern C++ design, showing how to combine language features and idioms to produce elegant, robust code.
 
-- [C++ Software Design](https://api.pageplace.de/preview/DT0400.9781098113131_A49444872/preview-9781098113131_A49444872.pdf)  
-  — A systems-level look at structuring C++ codebases: interfaces, boundaries, testability, and architecture patterns tailored to large C++ projects.
+- [C++ Software Design](https://api.pageplace.de/preview/DT0400.9781098113131_A49444872/preview-9781098113131_A49444872.pdf) — A systems-level look at structuring C++ codebases: interfaces, boundaries, testability, and architecture patterns tailored to large C++ projects.
 
 
 #### Computer Architecture and Operating Systems
 
-- [Computer Architecture: A Quantitative Approach (6th Edition)](https://unidel.edu.ng/focelibrary/books/COMPUTER%20ARCHICTECTURE.pdf)  
-  — Classic reference on CPU and system design, using real quantitative data to explore pipelining, caches, memory hierarchies, and parallelism.
+- [Computer Architecture: A Quantitative Approach (6th Edition)](https://unidel.edu.ng/focelibrary/books/COMPUTER%20ARCHICTECTURE.pdf) — Classic reference on CPU and system design, using real quantitative data to explore pipelining, caches, memory hierarchies, and parallelism.
 
-- [Computer Systems: A Programmer's Perspective (2nd Edition)](https://shuyuej.com/books/Computer%20Systems-%20A%20Programmer's%20Perspective.pdf)  
-  — Bridges the gap between hardware, compilers, and OSes, explaining how data representation, the memory hierarchy, linking, and concurrency affect real programs.
+- [Computer Systems: A Programmer's Perspective (2nd Edition)](https://shuyuej.com/books/Computer%20Systems-%20A%20Programmer's%20Perspective.pdf) — Bridges the gap between hardware, compilers, and OSes, explaining how data representation, the memory hierarchy, linking, and concurrency affect real programs.
 
-- [Operating Systems: Three Easy Pieces](https://www.amazon.com.be/-/en/Operating-Systems-Three-Easy-Pieces/dp/198508659X)  
-  — Concept-driven OS textbook organized around virtualization, concurrency, and persistence, with approachable explanations and hands-on projects.
+- [Operating Systems: Three Easy Pieces](https://www.amazon.com.be/-/en/Operating-Systems-Three-Easy-Pieces/dp/198508659X) — Concept-driven OS textbook organized around virtualization, concurrency, and persistence, with approachable explanations and hands-on projects.
 
 
 #### Networking
 
-- [TCP/IP Illustrated, Volume 1: The Protocols (2nd Edition)](http://www.r-5.org/files/books/computers/internals/net/Richard_Stevens-TCP-IP_Illustrated-EN.pdf)  
-  — Packet-level exploration of the TCP/IP stack, illustrating how protocols like IP, TCP, and UDP really behave on the wire with detailed traces and examples.
+- [TCP/IP Illustrated, Volume 1: The Protocols (2nd Edition)](http://www.r-5.org/files/books/computers/internals/net/Richard_Stevens-TCP-IP_Illustrated-EN.pdf) — Packet-level exploration of the TCP/IP stack, illustrating how protocols like IP, TCP, and UDP really behave on the wire with detailed traces and examples.
+
+- [Computer Networks: A Systems Approach](https://book.systemsapproach.org/) — A systems-oriented networking textbook that explains the Internet stack from links and switching up through routing, congestion control, and applications, with a strong focus on design principles, trade-offs, and real-world protocol behavior.
 
 
 #### Concurrency
 
-- [Concurrency in Action — Anthony Williams (2nd Edition)](https://beefnoodles.cc/assets/book/C++%20Concurrency%20in%20Action.pdf)  
-  — The go-to guide for C++ concurrency primitives (threads, mutexes, atomics, futures) and patterns for writing correct, modern multithreaded C++ code.
+- [Concurrency in Action — Anthony Williams (2nd Edition)](https://beefnoodles.cc/assets/book/C++%20Concurrency%20in%20Action.pdf) — The go-to guide for C++ concurrency primitives (threads, mutexes, atomics, futures) and patterns for writing correct, modern multithreaded C++ code.
 
-- [High Performance Parallelism Pearls Volume One: Multicore and Many-core Programming Approaches](https://www.amazon.nl/High-Performance-Parallelism-Pearls-One/dp/0128021187)  
-  — Collection of case studies on extracting performance from multicore CPUs and accelerators, covering practical parallelization techniques and real-world workloads.
+- [High Performance Parallelism Pearls Volume One: Multicore and Many-core Programming Approaches](https://www.amazon.nl/High-Performance-Parallelism-Pearls-One/dp/0128021187) — Collection of case studies on extracting performance from multicore CPUs and accelerators, covering practical parallelization techniques and real-world workloads.
 
-- [Concurrency with Modern C++](https://www.amazon.com.be/Concurrency-Modern-professional-programmer-concurrency/dp/B0CT41Q1FF)  
-  — Modern C++11–20 treatment of concurrency and parallelism, including threads, tasks, futures, lock-free techniques, and higher-level patterns for scalable systems.
+- [Concurrency with Modern C++](https://www.amazon.com.be/Concurrency-Modern-professional-programmer-concurrency/dp/B0CT41Q1FF) — Modern C++11–20 treatment of concurrency and parallelism, including threads, tasks, futures, lock-free techniques, and higher-level patterns for scalable systems.
 
 
 #### Algorithms
 
-- [Introduction to Algorithms (3rd Edition)](https://www.cs.mcgill.ca/~akroit/math/compsci/Cormen%20Introduction%20to%20Algorithms.pdf)  
-  — Comprehensive algorithms textbook (CLRS) covering data structures, graph algorithms, dynamic programming, and complexity analysis with mathematically rigorous treatments.
+- [Introduction to Algorithms (3rd Edition)](https://www.cs.mcgill.ca/~akroit/math/compsci/Cormen%20Introduction%20to%20Algorithms.pdf) — Comprehensive algorithms textbook (CLRS) covering data structures, graph algorithms, dynamic programming, and complexity analysis with mathematically rigorous treatments.
 
 
 ### Blogs
