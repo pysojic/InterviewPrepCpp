@@ -1,6 +1,6 @@
 # InterviewPrepCpp
 
-This repository is a modern C++ interview preparation toolkit, designed to deepen the understanding of core C++ concepts through clean, from-scratch implementations of data structures, concurrency primitives, smart pointers, metaprogramming techniques and more. It is organized to mirror the themes commonly explored in interviews, while encouraging a deeper grasp of language internals and performance considerations.
+This repository is a modern C++ interview preparation toolkit, designed to deepen the understanding of core C++ concepts through clean, from-scratch implementations of data structures, concurrency primitives, smart pointers, metaprogramming techniques and more. It is organized to mirror the themes commonly explored in interviews, while encouraging a deeper grasp of language internals and performance considerations. In addition to the code, it includes a curated “References & Further Reading” section that maps out books, blogs, and documentation for going deeper into modern C++, systems programming, performance, networking, concurrency, and algorithms.
 
 ## Structure Overview
 
