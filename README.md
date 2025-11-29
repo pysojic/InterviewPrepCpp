@@ -99,7 +99,7 @@ This section collects focused resources on modern C++, systems programming, perf
 - [Introduction to Algorithms (3rd Edition)](https://www.cs.mcgill.ca/~akroit/math/compsci/Cormen%20Introduction%20to%20Algorithms.pdf) — Comprehensive algorithms textbook (CLRS) covering data structures, graph algorithms, dynamic programming, and complexity analysis with mathematically rigorous treatments.
 
 #### Linux
-- [The Linux Command Line: A Complete Introduction](https://www.kea.nu/files/textbooks/humblesec/thelinuxcommandline.pdf) — A hands-on introduction to the Unix shell that takes you from basic commands and pipelines to shell scripting, job control, and everyday CLI workflows, giving you the practical foundation needed to be productive and confident on Linux systems.
+- [The Linux Command Line: A Complete Introduction (2nd Edition)](https://www.kea.nu/files/textbooks/humblesec/thelinuxcommandline.pdf) — A hands-on introduction to the Unix shell that takes you from basic commands and pipelines to shell scripting, job control, and everyday CLI workflows, giving you the practical foundation needed to be productive and confident on Linux systems.
 
 ### Blogs
 
