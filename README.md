@@ -4,32 +4,51 @@ This repository is a modern C++ interview preparation toolkit, designed to deepe
 
 ## Structure Overview
 
-### Containers
-Custom STL-like implementations that exercise memory management, iterators, and algorithmic behavior:
+### `include/`
+Header-only library code, organized by topic.
+
+#### `include/Containers/`
+Custom STL-like containers that exercise memory management, iterators, and algorithmic behavior:
 - `Array`, `Vector`, `String`
 - `List`, `ForwardList`
 - `HashMap` (chaining) and `OpenAddressingHashMap`
 - `SPSCQueue` for single-producer/single-consumer scenarios
 
-### Concurrency
+#### `include/Concurrency/`
 Basic synchronization primitives implemented manually to understand low-level threading:
 - `Mutex` (POSIX-based)
 - `SpinLock` (busy-wait locking)
 
-### SmartPointers
-Custom smart pointer implementations that mimic `unique_ptr`, `shared_ptr`, and related semantics.  
+#### `include/SmartPointers/`
+Custom smart pointer implementations that mimic `unique_ptr`, `shared_ptr`, and related semantics:
 - `UniquePtr`
 - `SharedPtr`
 - `WeakPtr`
 
-### Sorting
-Collection of classical sorting algorithms (e.g., quicksort, mergesort, heapsort) implemented with a focus on algorithmic clarity and performance trade-offs.
+#### `include/Sorting/`
+A collection of classical sorting algorithms (e.g., quicksort, mergesort, heapsort) implemented with a focus on clarity and performance trade-offs.
 
-### Utilities
+#### `include/Utilities/`
 Miscellaneous utilities showcasing advanced language features:
 - `Any.hpp`: type-erasure container
-- `CompileTimeFunctions.hpp`: template metaprogramming and constexpr exploration
-- `move_semantics.hpp`: move, forward utility functions
+- `CompileTimeFunctions.hpp`: template metaprogramming and `constexpr` exploration
+- `move_semantics.hpp`: `move`/`forward` helpers and move-semantics experiments
+
+### `src/`
+Small C++ programs that exercise and test some of the headers in `include/`. These files serve as usage examples and lightweight tests (for example, `metafunctions_test.cpp` for the metaprogramming utilities).
+
+### `interview_questions/`
+A collection of PDF question-and-answer sets. The questions are a mix of those that were asked in real interviews (either to me personally or sourced online) and ones I created while studying specific topics. They are organized as themed sheets you can skim or drill through before an interview:
+- C++ language and modern C++ features  
+- Operating systems and computer architecture (processes, scheduling, memory, synchronization, etc.)  
+- Networking (sockets, TCP/UDP, protocols, latency, etc.)
+
+I’ll keep adding new questions and answers as I read more resources on these topics.
+
+### `CMakeLists.txt`
+CMake build configuration for generating project files and building the code.
+
+
 
 ## Purpose
 
