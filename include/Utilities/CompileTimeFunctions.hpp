@@ -2,13 +2,21 @@
 
 #include <tuple>
 #include <type_traits>
+#include <iostream>
+
+//
+// Compile-time primality test for an integer N.
+// Usage: IsPrime<17>::value is true, IsPrime<18>::value is false.
+//
 
 template<int N>
 struct IsPrime 
 {
+    // Helper that tests divisibility of T by odd divisors starting at D.
     template<int T, int D>
     struct IsPrimeUtil;
 
+    // Base case: if D*D > T, no divisors were found → T is prime.
     template<int T, int D>
     requires(D*D > T)
     struct IsPrimeUtil<T, D> 
@@ -16,6 +24,7 @@ struct IsPrime
         static constexpr bool value = true;
     };
 
+    // Recursive case: check divisibility by D, then continue with D+2.
     template<int T, int D>
     requires(D*D <= T)
     struct IsPrimeUtil<T, D> 
@@ -24,9 +33,11 @@ struct IsPrime
         static constexpr bool value = divisible ? false : IsPrimeUtil< T, D+2 >::value;
     };
 
+    // Entry point: handle small values and even numbers, then start at divisor 3.
     static constexpr bool value = (N < 2) ? false : (N % 2 == 0) ? false : IsPrimeUtil<N,3>::value;
 };
 
+// Explicit specializations for small primes.
 template<> 
 struct IsPrime<2> 
 { 
@@ -38,25 +49,32 @@ struct IsPrime<3>
     static constexpr bool value = true; 
 };
 
-
-// Function that returns the size of a tuple at compile time
+//
+// LengthTuple<TList>::value
+// Compile-time length of a std::tuple<...>.
+//
 
 template <typename TList>
 struct LengthTuple;
 
+// Empty tuple has length 0.
 template<>
 struct LengthTuple<std::tuple<>>
 {
     static constexpr size_t value = 0;
 };
 
+// Recursively strip the head type and count.
 template <typename T, typename... Us>
 struct LengthTuple<std::tuple<T, Us...> >
 {
     static constexpr size_t value = 1 + LengthTuple<std::tuple<Us...>>::value;
 };
 
-// Function that appends the types of two tuple at compile time
+//
+// AppendTuple<First, Second>::type
+// Concatenate the type lists of two std::tuple<...> types.
+//
 
 template <typename First, typename Second>
 struct AppendTuple;
@@ -67,7 +85,13 @@ struct AppendTuple<std::tuple<Ts...>, std::tuple<Us...>>
     using type = std::tuple<Ts..., Us...>;
 };
 
-// Function that calculates the dimension of an array at compile-time
+//
+// Dimension<T>::value
+// Compute the number of array dimensions of T.
+//   Dimension<int>::value        == 0
+//   Dimension<int[3]>::value     == 1
+//   Dimension<int[3][4]>::value  == 2
+//
 
 template <typename T>
 struct Dimension
@@ -75,22 +99,34 @@ struct Dimension
     static constexpr size_t value = 0;
 };
 
+// One dimension for an unsized array type T[].
 template <typename T>
 struct Dimension<T[]>
 {
     static constexpr size_t value = 1;
 };
 
+// Sized array adds one dimension plus dimensions of the element type.
 template <typename T, size_t N>
 struct Dimension<T[N]>
 {
     static constexpr size_t value = 1 + Dimension<T>::value;
 };
 
+//
+// CompileTimeVector<int...>
+// Simple type wrapper for a sequence of integral values,
+// used by all sequence-manipulation metafunctions below.
+//
+
 template <int... Args>
 struct CompileTimeVector {};
 
 //---------- Print ----------
+//
+// Compile-time “print” helpers for CompileTimeVector.
+// These are constexpr functions but perform runtime I/O.
+//
 
 template<int Head>
 constexpr void print(CompileTimeVector<Head>)
@@ -106,6 +142,10 @@ constexpr void print(CompileTimeVector<Head, Args...> args)
 }
 
 //---------- Prepend ----------
+//
+// Prepend<Pre, Seq<...>>::type
+// Insert Pre at the beginning of an integer sequence.
+//
 
 template<int Pre, typename Seq>
 struct Prepend;
@@ -120,6 +160,10 @@ template<int Pre, typename... Args>
 using Prepend_t = typename Prepend<Pre, Args...>::type;
 
 //---------- Append ----------
+//
+// Append<Post, Seq<...>>::type
+// Append Post at the end of an integer sequence.
+//
 
 template<int Post, typename Seq>
 struct Append;
@@ -131,16 +175,22 @@ struct Append<Post, Seq<Args...>>
 };
 
 //---------- PopBack ----------
+//
+// PopBack<Seq<...>>::type
+// Remove the last element from an integer sequence.
+//
 
 template<typename Seq>
 struct PopBack;
 
+// Single-element sequence → becomes empty.
 template<template<int...> class Seq, int T>
 struct PopBack<Seq<T>>
 {
     using type = Seq<>;
 };
 
+// General case: recursively pop from the tail and rebuild the head.
 template<template<int...> class Seq, int First, int... Rest>
 struct PopBack<Seq<First, Rest...>>
 {
@@ -150,16 +200,22 @@ struct PopBack<Seq<First, Rest...>>
 };
 
 //---------- RemoveFirst ----------
+//
+// RemoveFirst<Value, Seq<...>>::type
+// Remove the first occurrence of Value from the sequence.
+//
 
 template <int First, typename Seq>
 struct RemoveFirst;
 
+// If the first element matches, drop it.
 template <template<int...> class Seq, int First, int... Tail>
 struct RemoveFirst<First, Seq<First, Tail...>>
 {
     using type = Seq<Tail...>;
 };
 
+// Otherwise, keep the head and recurse on the tail.
 template <template<int...> class Seq, int H, int First, int... Tail>
 struct RemoveFirst<First, Seq<H, Tail...>>
 {
@@ -168,22 +224,29 @@ struct RemoveFirst<First, Seq<H, Tail...>>
 };
 
 //---------- RemoveAll ----------
+//
+// RemoveAll<Value, Seq<...>>::type
+// Remove all occurrences of Value from the sequence.
+//
 
 template <int T, typename Seq>
 struct RemoveAll;
 
+// Empty sequence: nothing to remove.
 template<int T, template<int...> class Seq>
 struct RemoveAll<T, Seq<>>
 {
     using type = Seq<>;
 };
 
+// Head matches → skip it and recurse on tail.
 template <int T, template<int...> class Seq, int... Tail>
 struct RemoveAll<T, Seq<T, Tail...>>
 {
     using type = typename RemoveAll<T, Seq<Tail...>>::type;
 };
 
+// Head does not match → keep head and recurse on tail.
 template <int T, template<int...> class Seq, int Head, int... Tail>
 struct RemoveAll<T, Seq<Head, Tail...>>
 {
@@ -192,6 +255,10 @@ struct RemoveAll<T, Seq<Head, Tail...>>
 };
 
 //---------- Length ----------
+//
+// Length<Seq<...>>::value
+// Compile-time length of an integer sequence.
+//
 
 template<typename Seq>
 struct Length;
@@ -212,27 +279,35 @@ template<typename Seq>
 static constexpr std::size_t Length_v = Length<Seq>::value;
 
 //---------- Min ----------
+//
+// Min<Seq<...>>::value
+// Compute the minimum element of a non-empty sequence.
+//
 
 template <typename Seq>
 struct Min;
 
+// Single-element sequence: that element is the minimum.
 template <template<int...> class Seq, int N>
 struct Min<Seq<N>> 
 {
     static constexpr int value = N;
 };
 
-
+// General case: compare head with min of tail.
 template <template<int...> class Seq, int First, int Second, int... Rest>
 struct Min<Seq<First, Second, Rest...>> 
 {
-    // Compute the minimum of the tail (Second, Rest...)
     static constexpr int tail_min = Min<Seq<Second, Rest...>>::value;
-    // The overall minimum is the lesser of First and tail_min
     static constexpr int value = First < tail_min ? First : tail_min;
 };
 
 //---------- Insert ----------
+//
+// Insert<Value, Seq<...>>::type
+// Insert Value into a sequence that is assumed to be sorted,
+// preserving sorted order (used by insertion sort). 
+//
 
 template<int Value, typename Seq>
 struct Insert;
@@ -255,6 +330,10 @@ struct Insert<Value, Seq<Head, Tail...>>
 };
 
 //---------- InsertionSort ----------
+//
+// InsertionSort<Seq<...>>::type
+// Classic insertion sort performed at compile time on an integer sequence.
+//
 
 template <typename Seq>
 struct InsertionSort;
@@ -280,22 +359,29 @@ struct InsertionSort<Seq<Head1, Head2, Tail...>>
 };
 
 //---------- Concat ----------
+//
+// Concat<Seq1, Seq2, ...>::type
+// Concatenate one or more integer sequences into a single sequence.
+//
 
 template<typename... Vecs>
 struct Concat;
 
+// Single sequence → unchanged.
 template<template <int...> class Vec1, int... Args1>
 struct Concat<Vec1<Args1...>>
 {
     using type = Vec1<Args1...>;
 };
 
+// Concatenate two sequences.
 template<template <int...> class Vec1, int... Args1, template<int...> class Vec2, int... Args2>
 struct Concat<Vec1<Args1...>, Vec2<Args2...>>
 {
     using type = Vec1<Args1..., Args2...>;
 };
 
+// Variadic case: fold concatenation over all sequences.
 template<typename Vec1, typename Vec2, typename... Rest>
 struct Concat< Vec1, Vec2, Rest... > 
 {
@@ -304,10 +390,18 @@ struct Concat< Vec1, Vec2, Rest... >
 };
 
 //---------- Partition ----------
+//
+// Partition<Seq<...>, Pivot>
+// Split a sequence into two sequences:
+//   less: elements < Pivot
+//   ge:   elements >= Pivot
+// Used by QuickSort.
+//
 
 template <typename Seq, int Pivot>
 struct Partition;
 
+// Empty sequence → both parts empty.
 template <template<int...> class Seq, int Pivot>
 struct Partition<Seq<>, Pivot>
 {
@@ -327,6 +421,10 @@ struct Partition<Seq<Head, Tail...>, Pivot>
 };
 
 //---------- QuickSort ----------
+//
+// QuickSort<Seq<...>>::type
+// Compile-time quicksort over an integer sequence.
+//
 
 template<typename Seq>
 struct QuickSort;
@@ -343,6 +441,7 @@ struct QuickSort<Seq<Head>>
     using type = Seq<Head>;
 };
 
+// General case: choose first element as pivot, partition, then sort parts.
 template <template<int...> class Seq, int Pivot, int... Tail>
 struct QuickSort<Seq<Pivot, Tail...>>
 {
@@ -353,6 +452,10 @@ struct QuickSort<Seq<Pivot, Tail...>>
 };
 
 //---------- Unique ----------
+//
+// Unique<Seq<...>>::type
+// Remove consecutive duplicates from a sorted sequence.
+//
 
 template <typename Seq>
 struct Unique;
@@ -367,12 +470,15 @@ template <template<int...> class Seq, int Head>
 struct Unique< Seq<Head>> {
     using type = Seq<Head>;
 };
+
+// If the first two elements are the same, skip one.
 template <template<int...> class Seq, int Head, int... Tail>
 struct Unique<Seq<Head, Head, Tail...>>
 {
     using type = typename Unique<Seq<Head, Tail...>>::type;
 };
 
+// Otherwise, keep head and recurse.
 template <template<int...> class Seq, int Head1, int Head2, int... Tail>
 struct Unique<Seq<Head1, Head2, Tail...>>
 {
@@ -381,12 +487,22 @@ struct Unique<Seq<Head1, Head2, Tail...>>
 };
 
 //---------- Set ----------
+//
+// Set<Elem...>::type
+// Build a sorted, deduplicated set of integers from Elem...
+// by insertion-sorting and then applying Unique.
+//
+
 template <int... Elem>
 struct Set
 {
     using SortedSet = typename InsertionSort<Set<Elem...>>::type;
     using type = typename Unique<SortedSet>::type;
 };
+
+// SetFrom<Seq<...>>::type
+// Convenience wrapper to build a Set from an existing sequence.
+//
 
 template <typename Seq>
 struct SetFrom;
@@ -398,6 +514,10 @@ struct SetFrom<Seq<Args...>>
 };
 
 //---------- Get ----------
+//
+// GetValue<N, Seq<...>>::value
+// Retrieve the N-th element (0-based) from an integer sequence.
+//
 
 template<int N, typename Seq>
 struct GetValue;
@@ -416,6 +536,12 @@ struct GetValue<N, Seq<Head, Tail...>>
                   "Get<N,Seq>: index out of range");
     static constexpr int value = GetValue<N - 1, Seq<Tail...>>::value;
 };
+
+//
+// GetIndex<Value, Seq<...>>::value
+// Get the index (0-based) of the first occurrence of Value in Seq,
+// or -1 if Value does not appear.
+//
 
 template<int N, typename Seq>
 struct GetIndex;
@@ -440,6 +566,14 @@ struct GetIndex<N, Seq<Head, Tail...>>
 };
 
 //---------- BisectLeft ----------
+//
+// bisectLeftLR<L, R, N>(Seq<...>)
+// Internal helper: perform a compile-time binary search for the
+// leftmost insertion position of N in a sorted sequence.
+//
+// BisectLeft<N, Seq<...>>::value
+// Public interface that returns that insertion index.
+//
 
 template<int L, int R, int N, template<int...> class Seq, int... T>
 static constexpr int bisectLeftLR(Seq<T...> haystack)
@@ -472,6 +606,12 @@ struct BisectLeft<N, Seq<T...>>
 };
 
 //---------- Run Length Encoding ----------
+//
+// RLE<Values...>::type
+// Run-length encode a sequence of integers into a CompileTimeVector
+// of (count, value) pairs, e.g.
+//   RLE<1,1,1,2,2,3>::type  =>  <3,1,2,2,1,3>.
+//
 
 template<int...>
 struct RLE;
@@ -485,15 +625,18 @@ struct RLE<>
 template<int Head, int... Tail>
 struct RLE<Head, Tail...>
 {
+    // Helper accumulates runs as (count, value) pairs.
     template<typename AccumulatedRuns, int CurrentValue, int CurrentCount, int... List>
     struct Helper;
 
+    // End of input: push the final run into the accumulator.
     template<typename AccumulatedRuns, int CurrentValue, int CurrentCount>
     struct Helper<AccumulatedRuns, CurrentValue, CurrentCount>
     {
         using type = Concat<AccumulatedRuns, CompileTimeVector<CurrentCount, CurrentValue>>::type;
     };
 
+    // General case: extend current run or start a new one.
     template<typename AccumulatedRuns, int CurrentValue, int CurrentCount, int H, int... T>
     struct Helper<AccumulatedRuns, CurrentValue, CurrentCount, H, T...>
     {
@@ -507,6 +650,10 @@ struct RLE<Head, Tail...>
 };
 
 //---------- InsertAt ----------
+//
+// InsertAt<Value, Index, Seq<...>>::type
+// Insert Value at position Index (0-based) in the sequence.
+//
 
 template<int Value, int Index, typename Seq>
 struct InsertAt;
@@ -525,6 +672,9 @@ struct InsertAt<Value, Index, Seq<Head, Tail...>>
 };
 
 //---------- Zip ----------
+//
+// Arithmetic functors used with Zip / Zip2.
+//
 
 template<int A, int B>
 struct Plus 
@@ -544,6 +694,15 @@ struct Multiply
     static constexpr int value = A * B;
 };
 
+//
+// Zip2<Op, Seq1<...>, Seq2<...>>::type
+// Apply a binary metafunction Op element-wise to two sequences of
+// equal length.
+//
+// Zip<Op, Seq1, Seq2, ...>::type
+// Generalization to zipping more than two sequences.
+//
+
 template <template<int,int> class Op, typename Seq1, typename Seq2>
 struct Zip2;
 
@@ -556,12 +715,14 @@ struct Zip2<Op, Seq1<Args1...>, Seq2<Args2...>>
 template<template<int,int> class Op, typename... Seqs>
 struct Zip;
 
+// Single sequence → unchanged.
 template<template<int,int> class Op, typename Seq>
 struct Zip<Op, Seq>
 {
     using type = Seq;
 };
 
+// Variadic case: zip Seq1 with the zip of the remaining sequences.
 template<template<int,int> class Op, typename Seq1, typename...Seqs>
 struct Zip<Op, Seq1, Seqs...>
 {
