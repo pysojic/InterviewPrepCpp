@@ -31,6 +31,15 @@ Miscellaneous utilities showcasing advanced language features:
 - `CompileTimeFunctions.hpp`: template metaprogramming and constexpr exploration
 - `move_semantics.hpp`: move, forward utility functions
 
+### Interview Questions
+A set of PDF question-and-answer collections stored in the `interview_questions/` directory.  
+These are organized as themed sheets you can skim or drill through before an interview:
+- C++ language and modern C++ features
+- Operating systems and Computer Architecture (processes, scheduling, memory, synchronization, etc.)
+- Networking (sockets, TCP/UDP, protocols, latency, etc.)
+
+I will keep adding new questions and answers as I read more resources about those topics.
+
 ## Purpose
 
 This project is not meant to replace the STL. Instead, it is a learning environment to:
