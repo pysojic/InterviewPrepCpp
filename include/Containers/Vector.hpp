@@ -116,7 +116,7 @@ Vector<T, Allocator>::Vector(const Vector<T, Allocator>& other)
 {
     try 
     {
-        for (size_t i{}; i < m_Size; ++i) 
+        for (size_t i{}; i < other.m_Size; ++i) 
         {
             alloc::construct(m_Allocator, &m_Arr[m_Size++], other.m_Arr[i]);
         }
@@ -147,7 +147,7 @@ Vector<T, Allocator>& Vector<T, Allocator>::operator= (const Vector<T, Allocator
         // m_Size = 0; // Not really needed since clear() was called
         m_Arr = alloc::allocate(m_Allocator, m_Capacity);
         
-        for (size_t i{}; i < size; ++i) 
+        for (size_t i{}; i < other.m_Size; ++i) 
         {
             alloc::construct(m_Allocator, &m_Arr[m_Size++], other.m_Arr[i]);
         }
@@ -159,7 +159,7 @@ Vector<T, Allocator>& Vector<T, Allocator>::operator= (const Vector<T, Allocator
 template <typename T, typename Allocator>
 Vector<T, Allocator>::Vector(Vector<T, Allocator>&& other) noexcept
     : m_Arr{std::exchange(other.m_Arr, nullptr)}, m_Capacity{std::exchange(other.m_Capacity, 0)}, 
-    m_Size{std::exchange(other.m_Size, 0)}
+    m_Size{std::exchange(other.m_Size, 0)}, m_Allocator{std::exchange(pther.m_Allocator, nullptr)}
 {}
 
 template <typename T, typename Allocator>
@@ -247,7 +247,12 @@ void Vector<T, Allocator>::emplace_back(Args&&... args)
 template <typename T, typename Allocator>
 void Vector<T, Allocator>::shrink_to_fit()
 {
-    reallocate(m_Size);
+    if (m_Size == 0)
+    {
+        reallocate(1);
+        return;
+    }
+    reallocate(m_Size);    
 }
 
 template <typename T, typename Allocator>
