@@ -1,19 +1,22 @@
 #pragma once
 
 #include <utility>
+#include <memory>
 
-template<typename T>
+template<typename T, typename Allocator = std::allocator<T>>
 class Vector
 {
 public:
+    using alloc = std::allocator_traits<Allocator>;
+
     Vector();
     Vector(size_t size) ;
     Vector(size_t size, const T& value);
     Vector(std::initializer_list<T> init);
-    Vector(const Vector<T>& other);
-    Vector& operator= (const Vector<T>& other);
-    Vector(Vector<T>&& other) noexcept;
-    Vector<T>& operator=(Vector<T>&& other) noexcept;
+    Vector(const Vector<T, Allocator>& other);
+    Vector& operator= (const Vector<T, Allocator>& other);
+    Vector(Vector<T, Allocator>&& other) noexcept;
+    Vector<T, Allocator>& operator=(Vector<T, Allocator>&& other) noexcept;
     ~Vector() noexcept;    
 
     void clear() noexcept;
@@ -40,97 +43,94 @@ private:
     void reallocate(size_t newCapacity);
     
 private:
-    T* m_Arr;
+    Allocator m_Allocator;
     size_t m_Capacity;
     size_t m_Size;
+    T* m_Arr;
 };
 
 //------------Implementation--------------
 
-template <typename T>
-Vector<T>::Vector() 
-    : m_Capacity{1}, m_Size{0}
+template <typename T, typename Allocator>
+Vector<T, Allocator>::Vector() 
+    : m_Capacity{1}, m_Size{0}, m_Arr{alloc::allocate(m_Allocator, m_Capacity)}
 {
-    m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
 }
 
-template <typename T>
-Vector<T>::Vector(size_t size) 
-    : m_Capacity{size}, m_Size{0}
+template <typename T, typename Allocator>
+Vector<T, Allocator>::Vector(size_t size) 
+    : m_Capacity{size}, m_Size{0}, m_Arr{alloc::allocate(m_Allocator, m_Capacity)}
 {
-    m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
     try 
     {
-        for (size_t i = 0; i < size; ++i) 
+        for (size_t i{}; i < size; ++i) 
         {
-            std::construct_at(&m_Arr[m_Size++]); // default constructing
+            alloc::construct(m_Allocator, &m_Arr[m_Size++]); // default constructing
         }
     } 
     catch (...) 
     {
         // If construction fails, clean up constructed elements and free memory.
         clear();
-        ::operator delete(m_Arr, m_Capacity * sizeof(T));
+        alloc::deallocate(m_Allocator, m_Arr, m_Capacity);
         throw;
     }
 }
 
-template <typename T>
-Vector<T>::Vector(size_t size, const T& value) 
-    : m_Capacity{size}, m_Size{0}
+template <typename T, typename Allocator>
+Vector<T, Allocator>::Vector(size_t size, const T& value) 
+    : m_Capacity{size}, m_Size{0}, m_Arr{alloc::allocate(m_Allocator, m_Capacity)}
 {
-    m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
     try 
     {
-        for (size_t i = 0; i < size; ++i) 
+        for (size_t i{}; i < size; ++i) 
         {
-            std::construct_at(&m_Arr[m_Size++], value);
+            alloc::construct(m_Allocator, &m_Arr[m_Size++], value);
         }
     } 
     catch (...) 
     {
         clear();
-        ::operator delete(m_Arr, m_Capacity * sizeof(T));
+        alloc::deallocate(m_Allocator, m_Arr, m_Capacity);
         throw;
     }
 }
 
-template <typename T>
-Vector<T>::Vector(std::initializer_list<T> init)
+template <typename T, typename Allocator>
+Vector<T, Allocator>::Vector(std::initializer_list<T> init)
 {
     size_t size = init.size();
-    m_Arr = static_cast<T*>(::operator new(size * sizeof(T)));
     m_Capacity = size;
+    m_Arr = alloc::allocate(m_Allocator, m_Capacity);
     m_Size = 0;
 
     for (auto& elem : init)
     {
-        std::construct_at(&m_Arr[m_Size++], elem);
+        alloc::construct(m_Allocator, &m_Arr[m_Size++], elem);
     }
 }
 
-template <typename T>
-Vector<T>::Vector(const Vector<T>& other) 
-    : m_Capacity{other.m_Capacity}, m_Size{0}
+template <typename T, typename Allocator>
+Vector<T, Allocator>::Vector(const Vector<T, Allocator>& other) 
+    : m_Capacity{other.m_Capacity}, m_Size{0}, m_Arr{alloc::allocate(m_Allocator, m_Capacity)}
 {
-    m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
     try 
     {
-        for (size_t i = 0; i < other.m_Size; ++i) 
+        for (size_t i{}; i < size; ++i) 
         {
-            std::construct_at(&m_Arr[m_Size++], other.m_Arr[i]);
+            alloc::construct(m_Allocator, &m_Arr[m_Size++], other.m_Arr[i]);
         }
     } 
     catch (...) 
     {
         clear();
-        ::operator delete(m_Arr, m_Capacity * sizeof(T));
+        alloc::deallocate(m_Allocator, m_Arr, m_Capacity);
         throw;
     }
 }
 
-template <typename T>
-Vector<T>& Vector<T>::operator= (const Vector<T>& other)
+template <typename T, typename Allocator>
+Vector<T, Allocator>& Vector<T, Allocator>::operator= (const Vector<T, Allocator>& other)
 {
     if (this != &other)
     {
@@ -141,36 +141,36 @@ Vector<T>& Vector<T>::operator= (const Vector<T>& other)
         // Remember that an object which has been moved from should be left in a valid state
         // this->~Vector();
         clear();
-        ::operator delete(m_Arr, m_Capacity * sizeof(T));
+        alloc::deallocate(m_Allocator, m_Arr, m_Capacity);
 
         m_Capacity = other.m_Capacity;
         // m_Size = 0; // Not really needed since clear() was called
-        m_Arr = static_cast<T*>(::operator new(m_Capacity * sizeof(T)));
+        m_Arr = alloc::allocate(m_Allocator, m_Capacity);
         
-        for (size_t i = 0; i < other.m_Size; ++i)
+        for (size_t i{}; i < size; ++i) 
         {
-            std::construct_at(&m_Arr[m_Size++], other.m_Arr[i]);
+            alloc::construct(m_Allocator, &m_Arr[m_Size++], other.m_Arr[i]);
         }
     }
 
     return *this;
 }
 
-template <typename T>
-Vector<T>::Vector(Vector<T>&& other) noexcept
+template <typename T, typename Allocator>
+Vector<T, Allocator>::Vector(Vector<T, Allocator>&& other) noexcept
     : m_Arr{std::exchange(other.m_Arr, nullptr)}, m_Capacity{std::exchange(other.m_Capacity, 0)}, 
     m_Size{std::exchange(other.m_Size, 0)}
 {}
 
-template <typename T>
-Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept
+template <typename T, typename Allocator>
+Vector<T, Allocator>& Vector<T, Allocator>::operator=(Vector<T, Allocator>&& other) noexcept
 {
     if (this != &other)
     {
         // Same problem as for the copy assignment operator, see above
         // this->~Vector();
         clear();
-        ::operator delete(m_Arr, m_Capacity * sizeof(T));
+        alloc::deallocate(m_Allocator, m_Arr, m_Capacity);
 
         // Steal resources
         m_Arr = std::exchange(other.m_Arr, nullptr);
@@ -180,26 +180,26 @@ Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept
     return *this;
 }
 
-template <typename T>
-Vector<T>::~Vector() noexcept
+template <typename T, typename Allocator>
+Vector<T, Allocator>::~Vector() noexcept
 {
     clear();
-    ::operator delete(m_Arr, m_Capacity * sizeof(T));
+    alloc::deallocate(m_Allocator, m_Arr, m_Capacity);
 }
 
-template <typename T>
-void Vector<T>::clear() noexcept
+template <typename T, typename Allocator>
+void Vector<T, Allocator>::clear() noexcept
 {
     for (size_t i = 0; i < m_Size; ++i)
     {
         // m_Arr[i].~T(); Equivalent 
-        std::destroy_at(&m_Arr[i]);
+        alloc::destroy(m_Allocator, &m_Arr[i]);
     }
     m_Size = 0;
 }
 
-template <typename T>
-void Vector<T>::push_back(const T& obj)
+template <typename T, typename Allocator>
+void Vector<T, Allocator>::push_back(const T& obj)
 {
     if (m_Size >= m_Capacity)
         reallocate(m_Capacity * 2);
@@ -211,8 +211,8 @@ void Vector<T>::push_back(const T& obj)
     std::construct_at(&m_Arr[m_Size++], obj);
 }
 
-template <typename T>
-void Vector<T>::push_back(T&& obj)
+template <typename T, typename Allocator>
+void Vector<T, Allocator>::push_back(T&& obj)
 {
     if (m_Size >= m_Capacity)
         reallocate(m_Capacity * 2);
@@ -224,8 +224,8 @@ void Vector<T>::push_back(T&& obj)
     std::construct_at(&m_Arr[m_Size++], std::move(obj));
 }
 
-template <typename T>
-void Vector<T>::pop_back() noexcept
+template <typename T, typename Allocator>
+void Vector<T, Allocator>::pop_back() noexcept
 {
     if (m_Size > 0)
     {
@@ -234,9 +234,9 @@ void Vector<T>::pop_back() noexcept
     }
 }
 
-template<typename T>
+template<typename T, typename Allocator>
 template<typename... Args>
-void Vector<T>::emplace_back(Args&&... args)
+void Vector<T, Allocator>::emplace_back(Args&&... args)
 {
     if (m_Size >= m_Capacity)
         reallocate(m_Capacity * 2);
@@ -244,14 +244,14 @@ void Vector<T>::emplace_back(Args&&... args)
     std::construct_at(&m_Arr[m_Size++], std::forward<Args>(args)...);
 }
 
-template <typename T>
-void Vector<T>::shrink_to_fit()
+template <typename T, typename Allocator>
+void Vector<T, Allocator>::shrink_to_fit()
 {
     reallocate(m_Size);
 }
 
-template <typename T>
-void Vector<T>::resize(size_t newSize)
+template <typename T, typename Allocator>
+void Vector<T, Allocator>::resize(size_t newSize)
 {
     if (newSize > m_Size)
     {
@@ -284,15 +284,15 @@ void Vector<T>::resize(size_t newSize)
     m_Size = newSize;
 }
 
-template <typename T>
-void Vector<T>::reserve(size_t newCapacity)
+template <typename T, typename Allocator>
+void Vector<T, Allocator>::reserve(size_t newCapacity)
 {
     if (newCapacity > m_Capacity)
         reallocate(newCapacity);
 }
 
-template <typename T>
-void Vector<T>::print() const 
+template <typename T, typename Allocator>
+void Vector<T, Allocator>::print() const 
 {
     for (size_t i = 0; i < m_Size; ++i )
     {
@@ -303,8 +303,8 @@ void Vector<T>::print() const
 }
 
 
-template <typename T>
-void Vector<T>::reallocate(size_t newCapacity)
+template <typename T, typename Allocator>
+void Vector<T, Allocator>::reallocate(size_t newCapacity)
 {                 
     T* ptr = static_cast<T*>(::operator new(newCapacity * sizeof(T)));
 
