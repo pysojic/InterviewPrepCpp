@@ -116,7 +116,7 @@ Vector<T, Allocator>::Vector(const Vector<T, Allocator>& other)
 {
     try 
     {
-        for (size_t i{}; i < size; ++i) 
+        for (size_t i{}; i < m_Size; ++i) 
         {
             alloc::construct(m_Allocator, &m_Arr[m_Size++], other.m_Arr[i]);
         }
@@ -208,7 +208,7 @@ void Vector<T, Allocator>::push_back(const T& obj)
     // Directly assigning to m_Arr[m_Size] is essentially writing to uninitialized memory, 
     // which is undefined behavior—even if it appears to work in some cases.
     // m_Arr[m_Size++] = obj;
-    std::construct_at(&m_Arr[m_Size++], obj);
+    alloc::construct(m_Allocator, &m_Arr[m_Size++], obj);
 }
 
 template <typename T, typename Allocator>
@@ -221,7 +221,7 @@ void Vector<T, Allocator>::push_back(T&& obj)
     // Directly assigning to m_Arr[m_Size] is essentially writing to uninitialized memory, 
     // which is undefined behavior—even if it appears to work in some cases.
     // m_Arr[m_Size++] = std::move(obj);
-    std::construct_at(&m_Arr[m_Size++], std::move(obj));
+    alloc::construct(m_Allocator, &m_Arr[m_Size++], std::move(obj));
 }
 
 template <typename T, typename Allocator>
@@ -241,7 +241,7 @@ void Vector<T, Allocator>::emplace_back(Args&&... args)
     if (m_Size >= m_Capacity)
         reallocate(m_Capacity * 2);
 
-    std::construct_at(&m_Arr[m_Size++], std::forward<Args>(args)...);
+    alloc::construct(m_Allocator, &m_Arr[m_Size++], std::forward<Args>(args)...);
 }
 
 template <typename T, typename Allocator>
@@ -259,7 +259,7 @@ void Vector<T, Allocator>::resize(size_t newSize)
         {
             for (size_t i = m_Size; i < newSize; ++i)
             {
-                std::construct_at(&m_Arr[i]);
+                alloc::construct(m_Allocator, &m_Arr[i]);
             }
         }   
         else
@@ -267,7 +267,7 @@ void Vector<T, Allocator>::resize(size_t newSize)
             reallocate(newSize + (newSize >> 1));
             for (size_t i = m_Size; i < newSize; ++i)
             {
-                std::construct_at(&m_Arr[i]);
+                alloc::construct(m_Allocator, &m_Arr[i]);
             }
         }
     }
@@ -277,7 +277,7 @@ void Vector<T, Allocator>::resize(size_t newSize)
         for (size_t i = m_Size - 1; i > newSize - 1; --i)
         {
             //m_Arr[i].~T();
-            std::destroy_at(&m_Arr[i]);
+            alloc::destroy(m_Allocator, &m_Arr[i]);
         }
     }
 
@@ -306,17 +306,17 @@ void Vector<T, Allocator>::print() const
 template <typename T, typename Allocator>
 void Vector<T, Allocator>::reallocate(size_t newCapacity)
 {                 
-    T* ptr = static_cast<T*>(::operator new(newCapacity * sizeof(T)));
+    T* ptr = alloc::allocate(m_Allocator, newCapacity);
 
     for (size_t i = 0; i < m_Size; ++i)
     {
         // ptr[i] = std::move(m_Arr[i]); // Does not work, ptr[i] is unassigned memory, cannot move assign on unitialized memory
-        std::construct_at(&ptr[i], std::move(m_Arr[i]));
+        alloc::construct(m_Allocator, &ptr[i], std::move(m_Arr[i]));
         // m_Arr[i].~T(); Equivalent to line below
-        std::destroy_at(&m_Arr[i]);
+        alloc::destroy(m_Allocator, &m_Arr[i]);
     }
 
-    ::operator delete(m_Arr, m_Capacity * sizeof(T));
+    alloc::deallocate(m_Allocator, m_Arr, m_Capacity);
     m_Capacity = newCapacity;
     m_Arr = ptr;
 }
