@@ -80,7 +80,7 @@ namespace pysojic
 
         T* get() const noexcept { return m_Data; }
         size_t use_count() const noexcept { return m_ControlBlock ? m_ControlBlock->m_RefCount.load() : 0; }
-        operator bool() const { return m_Data != nullptr; }
+        explicit operator bool() const { return m_Data != nullptr; }
         // const T& operator []() const; To do next
         const T& operator *() const { return *m_Data; }
         T* operator ->() const { return m_Data; }
@@ -101,8 +101,11 @@ namespace pysojic
 
     template <typename T>
     SharedPtr<T>::SharedPtr(T* ptr) 
-        : m_ControlBlock{ new ControlBlockSeparate<T>(ptr)}, m_Data{ptr}
-    {}
+        : m_ControlBlock{ new ControlBlockSeparate<T>(nullptr)}, m_Data{ptr}
+    {
+        if (ptr)
+            m_ControlBlock = new ControlBlockSeparate<T>(ptr);
+    }
 
     template <typename T>
     SharedPtr<T>::SharedPtr(const SharedPtr<T>& other) 
@@ -202,13 +205,20 @@ namespace pysojic
         using CB = ControlBlockInplace<T>;
 
         void* mem = ::operator new(sizeof(CB));
-        CB* cb = ::new (mem) CB(std::forward<Args>(args)...);
+        try 
+        {
+            CB* cb = ::new (mem) CB(std::forward<Args>(args)...);
 
-        SharedPtr<T> sp;
-        sp.m_ControlBlock = cb;
-        sp.m_Data = cb->ptr();
-        
-        return sp;
+            SharedPtr<T> sp;
+            sp.m_ControlBlock = cb;
+            sp.m_Data = cb->ptr();
+            return sp;
+        } 
+        catch (...) 
+        {
+            ::operator delete(mem);
+            throw;
+        }
     }
 
 }
