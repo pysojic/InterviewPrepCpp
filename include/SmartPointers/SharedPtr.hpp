@@ -64,7 +64,9 @@ namespace pysojic
             this->~ControlBlockInplace();
             ::operator delete(this); // release the memory
         }
-
+        
+        // Constructing a T at a misaligned address is undefined behavior in the language, hence alignas is mandatory
+        // here, otherwise it is UB
         alignas(T) std::byte buf[sizeof(T)];
     };
 
