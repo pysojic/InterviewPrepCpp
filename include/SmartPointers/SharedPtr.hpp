@@ -8,6 +8,7 @@
 
 namespace pysojic
 {
+    // Base class for the control block
     struct ControlBlockBase
     {
         virtual void destroy_object() noexcept = 0;   // when strong -> 0
@@ -18,6 +19,7 @@ namespace pysojic
         std::atomic_size_t m_WeakRefCount{0};
     };
 
+    // Derived class for cases where the control block and data where initialized separately
     template <typename T>
     struct ControlBlockSeparate : public ControlBlockBase
     {
@@ -37,6 +39,7 @@ namespace pysojic
         T* m_Data;
     };
 
+    // Derived class for cases where the control block and data where initialized together (via make_shared)
     template <typename T>
     struct ControlBlockInplace : public ControlBlockBase
     {
