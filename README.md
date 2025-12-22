@@ -120,6 +120,9 @@ This section collects focused resources on modern C++, systems programming, perf
 #### Linux
 - [The Linux Command Line: A Complete Introduction (2nd Edition)](https://www.kea.nu/files/textbooks/humblesec/thelinuxcommandline.pdf) — A hands-on introduction to the Unix shell that takes you from basic commands and pipelines to shell scripting, job control, and everyday CLI workflows, giving you the practical foundation needed to be productive and confident on Linux systems.
 
+#### HFT/Trading Systems
+- [Trading Systems Developer Interview Guide](https://www.amazon.com/Trading-Systems-Developer-Interview-Guide-ebook/dp/B08LCK6TM4) — A focused collection of real-world trading-systems interview questions and answers, with heavy emphasis on low-latency engineering, C++ performance fundamentals (memory/layout, concurrency), market microstructure basics, and the practical system-design tradeoffs you’re expected to reason about in HFT-style roles.
+
 ### Blogs
 
 - [Herb Sutter’s Blog](https://herbsutter.com/)
