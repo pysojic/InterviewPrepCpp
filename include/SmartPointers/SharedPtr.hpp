@@ -19,7 +19,7 @@ namespace pysojic
         std::atomic_size_t m_WeakRefCount{0};
     };
 
-    // Derived class for cases where the control block and data where initialized separately
+    // Derived class for cases where the control block and data were initialized separately
     template <typename T>
     struct ControlBlockSeparate : public ControlBlockBase
     {
@@ -39,7 +39,7 @@ namespace pysojic
         T* m_Data;
     };
 
-    // Derived class for cases where the control block and data where initialized together (via make_shared)
+    // Derived class for cases where the control block and data were initialized together (via make_shared)
     template <typename T>
     struct ControlBlockInplace : public ControlBlockBase
     {
