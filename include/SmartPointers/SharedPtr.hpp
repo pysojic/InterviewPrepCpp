@@ -31,7 +31,7 @@ namespace pysojic
             delete m_Data;
             m_Data = nullptr;
         } 
-        virtual void destroy_self() noexcept override     // when strong==0 && weak==0
+        virtual void destroy_self() noexcept override // when strong==0 && weak==0
         {
             delete this;
         }
@@ -62,7 +62,7 @@ namespace pysojic
         virtual void destroy_self() noexcept override     // when strong==0 && weak==0
         {
             this->~ControlBlockInplace();
-            ::operator delete(static_cast<void*>(this)); // release the memory
+            ::operator delete(this); // release the memory
         }
 
         alignas(T) std::byte buf[sizeof(T)];
@@ -96,8 +96,8 @@ namespace pysojic
         friend SharedPtr<K> make_shared(Args&&... args);
 
     private:
-        ControlBlockBase* m_ControlBlock = nullptr;
-        T* m_Data = nullptr;
+        ControlBlockBase* m_ControlBlock{nullptr};
+        T* m_Data{nullptr};
     };
 
     //------------Implementation--------------
@@ -207,10 +207,10 @@ namespace pysojic
     {
         using CB = ControlBlockInplace<T>;
 
-        void* mem = ::operator new(sizeof(CB));
+        CB* mem = static_cast<CB*>(::operator new(sizeof(CB)));
         try 
         {
-            CB* cb = ::new (mem) CB(std::forward<Args>(args)...);
+            CB* cb = std::construct_at(mem, std::forward<Args>(args)...);
 
             SharedPtr<T> sp;
             sp.m_ControlBlock = cb;
