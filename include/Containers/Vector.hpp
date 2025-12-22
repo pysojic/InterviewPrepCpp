@@ -159,7 +159,7 @@ Vector<T, Allocator>& Vector<T, Allocator>::operator= (const Vector<T, Allocator
 template <typename T, typename Allocator>
 Vector<T, Allocator>::Vector(Vector<T, Allocator>&& other) noexcept
     : m_Arr{std::exchange(other.m_Arr, nullptr)}, m_Capacity{std::exchange(other.m_Capacity, 0)}, 
-    m_Size{std::exchange(other.m_Size, 0)}, m_Allocator{std::exchange(pther.m_Allocator, nullptr)}
+    m_Size{std::exchange(other.m_Size, 0)}, m_Allocator{std::exchange(other.m_Allocator, nullptr)}
 {}
 
 template <typename T, typename Allocator>

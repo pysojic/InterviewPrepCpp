@@ -2,22 +2,12 @@
 #include <print>
 
 #include "Containers/Vector.hpp"
+#include "SmartPointers/SharedPtr.hpp"
 
 int main()
 {
-    Vector<int> v{1,2,3,4,5};
-
-    for (size_t i{}; i < v.size(); ++i)
-    {
-        std::cout << v[i] << ',';
-    }
-
-    Vector v2(v);
-
-    for (size_t i{}; i < v2.size(); ++i)
-    {
-        std::cout << v[i] << ',';
-    }
-
-    return 0;
+    pysojic::SharedPtr<int> sp;
+    pysojic::SharedPtr<int> sp2 = pysojic::make_shared<int>(2);
+    std::cout << sizeof(sp) << '\n';
+    std::cout << sizeof(*(sp2.m_ControlBlock));
 }
