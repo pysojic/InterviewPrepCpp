@@ -3,43 +3,87 @@
 #include <iostream>
 #include <utility>
 #include <atomic>
+#include <memory>
+#include <cstddef>
 
 namespace pysojic
 {
+    struct ControlBlockBase
+    {
+        virtual void destroy_object() noexcept = 0;   // when strong -> 0
+        virtual void destroy_self() noexcept = 0;     // when strong==0 && weak==0
+        virtual ~ControlBlockBase() noexcept = default;
+        
+        std::atomic_size_t m_RefCount{1};
+        std::atomic_size_t m_WeakRefCount{0};
+    };
+
+    template <typename T>
+    struct ControlBlockSeparate : public ControlBlockBase
+    {
+        explicit ControlBlockSeparate(T* data)
+            : m_Data{data}
+        {}
+        virtual void destroy_object() noexcept override // when strong -> 0
+        {
+            delete m_Data;
+            m_Data = nullptr;
+        } 
+        virtual void destroy_self() noexcept override     // when strong==0 && weak==0
+        {
+            delete this;
+        }
+
+        T* m_Data;
+    };
+
+    template <typename T>
+    struct ControlBlockInplace : public ControlBlockBase
+    {
+        template <typename... Args>
+        explicit ControlBlockInplace(Args&&... args)
+        {
+            std::construct_at(ptr(), std::forward<Args>(args)...);
+        }
+        T* ptr() noexcept
+        {
+            /* std::launder makes this a "valid pointer to the T object currently living in this raw storage"
+               after placement-new/construct_at, so the compiler doesn't treat it as an old/byte-pointer under
+               object-lifetime rules (important when objects are created/destroyed in-place in the same buffer). */
+            return std::launder(reinterpret_cast<T*>(buf));
+        }
+        virtual void destroy_object() noexcept override // when strong -> 0
+        {
+            std::destroy_at(ptr()); // destroys the object
+        } 
+        virtual void destroy_self() noexcept override     // when strong==0 && weak==0
+        {
+            this->~ControlBlockInplace();
+            ::operator delete(static_cast<void*>(this)); // release the memory
+        }
+
+        alignas(T) std::byte buf[sizeof(T)];
+    };
+
     template <typename T>
     class SharedPtr
     {
-        template <typename K>
-        class ControlBlock
-        {
-            friend class SharedPtr;
-            template<typename U, typename... Args>
-            friend SharedPtr<U> make_shared(Args&&... args);
-
-            ControlBlock();
-            explicit ControlBlock(K* data);
-            ~ControlBlock() noexcept;
-
-            T* m_Data;
-            std::atomic_size_t m_RefCount;
-            std::atomic_size_t m_WeakRefCount;
-        };
 
     public:
-        SharedPtr() ;
-        explicit SharedPtr(T* ptr) ;
+        SharedPtr() = default;
+        explicit SharedPtr(T* ptr);
         SharedPtr(const SharedPtr& other);
         SharedPtr& operator =(const SharedPtr& other);
         SharedPtr(SharedPtr&& other) noexcept;
         SharedPtr& operator= (SharedPtr&& other) noexcept;
         ~SharedPtr() noexcept;
 
-        T* get() const noexcept { return m_ControlBlock->m_Data; }
-        size_t use_count() const noexcept { return m_ControlBlock ? m_ControlBlock->m_RefCount : 0; }
-        operator bool() const { return m_ControlBlock && m_ControlBlock->m_Data != nullptr; }
+        T* get() const noexcept { return m_Data; }
+        size_t use_count() const noexcept { return m_ControlBlock ? m_ControlBlock->m_RefCount.load() : 0; }
+        operator bool() const { return m_Data != nullptr; }
         // const T& operator []() const; To do next
-        const T& operator *() const { return *m_ControlBlock->m_Data; }
-        T* operator ->() const { return m_ControlBlock->m_Data; }
+        const T& operator *() const { return *m_Data; }
+        T* operator ->() const { return m_Data; }
 
         void reset(T* other_ptr);
         void swap(SharedPtr& other);
@@ -49,43 +93,20 @@ namespace pysojic
         friend SharedPtr<K> make_shared(Args&&... args);
 
     private:
-        explicit SharedPtr(ControlBlock<T>* cb);
-
-    private:
-        ControlBlock<T>* m_ControlBlock;
+        ControlBlockBase* m_ControlBlock = nullptr;
+        T* m_Data = nullptr;
     };
 
     //------------Implementation--------------
 
     template <typename T>
-    template <typename K>
-    SharedPtr<T>::ControlBlock<K>::ControlBlock() 
-        : m_Data{nullptr}, m_RefCount{}, m_WeakRefCount{}
-    {}
-
-    template <typename T>
-    template <typename K>
-    SharedPtr<T>::ControlBlock<K>::ControlBlock(K* data) 
-        : m_Data{data}, m_RefCount{1}, m_WeakRefCount{}
-    {}
-
-    template <typename T>
-    template <typename K>
-    SharedPtr<T>::ControlBlock<K>::~ControlBlock() noexcept { delete m_Data; }
-
-    template <typename T>
-    SharedPtr<T>::SharedPtr() 
-        : m_ControlBlock{ nullptr }
-    {}
-
-    template <typename T>
     SharedPtr<T>::SharedPtr(T* ptr) 
-        : m_ControlBlock( new ControlBlock<T>(ptr) )
+        : m_ControlBlock{ new ControlBlockSeparate<T>(ptr)}, m_Data{ptr}
     {}
 
     template <typename T>
     SharedPtr<T>::SharedPtr(const SharedPtr<T>& other) 
-        : m_ControlBlock{ other.m_ControlBlock } 
+        : m_ControlBlock{ other.m_ControlBlock } , m_Data{other.m_Data}
     {
         // Checks that other already owns memory
         if (m_ControlBlock) 
@@ -101,6 +122,7 @@ namespace pysojic
         {
             release();
             m_ControlBlock = other.m_ControlBlock;
+            m_Data = other.m_Data;
             if (m_ControlBlock)
             {
                 ++m_ControlBlock->m_RefCount;
@@ -112,7 +134,7 @@ namespace pysojic
 
     template <typename T>
     SharedPtr<T>::SharedPtr(SharedPtr&& other) noexcept
-        : m_ControlBlock{std::exchange(other.m_ControlBlock, nullptr)}
+        : m_ControlBlock{std::exchange(other.m_ControlBlock, nullptr)}, m_Data{std::exchange(other.m_Data, nullptr)}
     {}
 
     template <typename T>
@@ -120,16 +142,12 @@ namespace pysojic
     {
         if (this != &other)
         {
+            release();
             m_ControlBlock = std::exchange(other.m_ControlBlock, nullptr);
+            m_Data = std::exchange(other.m_Data, nullptr);
         }
 
         return *this;
-    }
-
-    template <typename T>
-    SharedPtr<T>::SharedPtr(ControlBlock<T>* cb)
-    {
-        m_ControlBlock = cb;
     }
 
     template <typename T>
@@ -142,54 +160,55 @@ namespace pysojic
     void SharedPtr<T>::reset(T* other_ptr) 
     { 
         release();
-        m_ControlBlock = new ControlBlock<T>(other_ptr);
+        if (!other_ptr) 
+        {
+            m_ControlBlock = nullptr;
+            m_Data = nullptr;
+            return;
+        }
+        m_ControlBlock = new ControlBlockSeparate<T>(other_ptr); 
+        m_Data = other_ptr;
     }
 
     template <typename T>
     void SharedPtr<T>::swap(SharedPtr<T>& other)
     {
         std::swap(m_ControlBlock, other.m_ControlBlock);
+        std::swap(m_Data, other.m_Data);
     }
 
     template <typename T>
     void SharedPtr<T>::release()
     {
-        if (m_ControlBlock)
+        if (!m_ControlBlock) 
+            return;
+
+        if (m_ControlBlock->m_RefCount.fetch_sub(1) == 1) 
         {
-            if (--m_ControlBlock->m_RefCount == 0)
+            m_ControlBlock->destroy_object();
+            if (m_ControlBlock->m_WeakRefCount.load() == 0) 
             {
-                // Could potentially keep the control block alive if WeakRefCount above one
-                delete m_ControlBlock;
+                m_ControlBlock->destroy_self();
             }
-            m_ControlBlock = nullptr;
         }
+
+        m_ControlBlock = nullptr;
+        m_Data = nullptr;
     }
 
     template<typename T, typename... Args>
     SharedPtr<T> make_shared(Args&&... args)
     {
-        using ControlBlock = typename SharedPtr<T>::template ControlBlock<T>;
-        // Allocate a contiguous block for T and its ControlBlock
-        T* block = static_cast<T*>(::operator new(sizeof(T) + sizeof(ControlBlock)));
-        
-        // Construct T at the beginning of the block
-        std::construct_at(block, std::forward<Args>(args)...);
-        
-        // Calculate the address for the ControlBlock
-        auto* cbMem = reinterpret_cast<ControlBlock*>(
-            reinterpret_cast<char*>(block) + sizeof(T)
-        );
-        
-        // Construct the ControlBlock
-        // Need to use placement new instead of std::construct_at since that function does not have access to
-        // the private constructors of the ControlBlock class
-        ::new(cbMem) ControlBlock(block);
-        
-        return SharedPtr<T>(cbMem);
+        using CB = ControlBlockInplace<T>;
 
-        /*Need to rethink the whole class, doing the above will lead to a runtime crash because the destructor
-        will wrongly try to delete both the data and the control block separetely while they are actually
-        a single block of memory.*/
+        void* mem = ::operator new(sizeof(CB));
+        CB* cb = ::new (mem) CB(std::forward<Args>(args)...);
+
+        SharedPtr<T> sp;
+        sp.m_ControlBlock = cb;
+        sp.m_Data = cb->ptr();
+        
+        return sp;
     }
 
 }
