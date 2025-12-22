@@ -106,10 +106,10 @@ namespace pysojic
 
     template <typename T>
     SharedPtr<T>::SharedPtr(T* ptr) 
-        : m_ControlBlock{ new ControlBlockSeparate<T>(nullptr)}, m_Data{ptr}
+        : m_ControlBlock{ ptr ? new ControlBlockSeparate<T>(ptr) : nullptr }, m_Data{ptr}
     {
         if (ptr)
-            m_ControlBlock = new ControlBlockSeparate<T>(ptr);
+            m_ControlBlock = new ControlBlockSeparate<T>{ptr};
     }
 
     template <typename T>
