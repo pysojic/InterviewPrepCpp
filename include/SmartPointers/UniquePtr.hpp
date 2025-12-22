@@ -102,7 +102,8 @@ namespace pysojic
 
     private:
         T * m_Data;
-       [[no_unique_address]] Deleter m_Deleter;
+        // use the [[no_unique_address]] attribute to save memory when deleter is stateless
+       [[no_unique_address]] Deleter m_Deleter; 
     };
 
     // Make Unique
