@@ -1,6 +1,35 @@
 #include <atomic>
 #include <iostream>
 
+/*
+NOTE ABOUT PERFORMANCE UNDER CONTENTION
+--------------------------------------
+This spinlock uses atomic_flag::test_and_set() in a tight loop (a “TAS” lock: test-and-set).
+Under contention, this performs poorly because each failed iteration is a read–modify–write (RMW)
+on the same cache line. On most CPUs, an RMW requires exclusive ownership of that cache line,
+so every spinning thread repeatedly forces the line into an exclusive state. With multiple
+contenders this creates heavy cache-coherence traffic (“cache line ping-pong”), burns CPU,
+increases latency, and can reduce overall throughput. It is also not fair: a thread may starve.
+
+How to improve:
+1) Use a TTAS lock (test–test–and–set):
+    - Do ONE RMW attempt to acquire.
+    - If it fails, spin using only relaxed loads until the lock looks free, then retry the RMW.
+    This keeps the cache line mostly shared while waiting, dramatically reducing coherence storms.
+
+ 2) Add backoff / pause:
+    - Insert a processor “pause” instruction (e.g., _mm_pause on x86) inside the spin loop to
+      reduce power and improve hyper-threading behavior.
+    - Consider exponential backoff or occasional std::this_thread::yield() for longer waits.
+
+ 3) Consider a different primitive when appropriate:
+    - For anything but very short critical sections (and especially if blocking/I/O can occur),
+      prefer std::mutex or platform futex-based locks to avoid wasting CPU.
+    - For higher fairness under contention, consider ticket/MCS locks.
+
+ See a nice post from Erik Rigtorp about this here: https://rigtorp.se/spinlock/
+*/
+
 class SpinLock
 {
 public:

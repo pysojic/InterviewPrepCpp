@@ -7,7 +7,7 @@
 #include <cstddef>
 
 /*
-I intentionally didn’t implement a fully type-erased deleter for this SharedPtr. 
+I intentionally didn’t implement a fully type-erased deleter for this SharedPtr implementation. 
 For most interview settings (especially non-senior), that level of generality is rarely expected, 
 and it adds a fair amount of complexity beyond the core ownership mechanics. 
 If you’d like to go deeper into how production implementations handle type-erased deleters, 
