@@ -6,6 +6,14 @@
 #include <memory>
 #include <cstddef>
 
+/*
+I intentionally didn’t implement a fully type-erased deleter for this SharedPtr. 
+For most interview settings (especially non-senior), that level of generality is rarely expected, 
+and it adds a fair amount of complexity beyond the core ownership mechanics. 
+If you’d like to go deeper into how production implementations handle type-erased deleters, 
+Fedor Pikus has an excellent explanation here: https://www.youtube.com/watch?v=p-qaf6OS_f4&t=1368s
+*/
+
 namespace pysojic
 {
     // Base class for the control block

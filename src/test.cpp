@@ -7,8 +7,14 @@
 
 int main()
 {
-    pysojic::SharedPtr<int> sp;
-    pysojic::SharedPtr<int> sp2 = pysojic::make_shared<int>(2);
-    pysojic::UniquePtr<int> up;
-    std::cout << sizeof(up);
+    pysojic::SharedPtr<std::string> sp;
+    pysojic::SharedPtr<std::string> sp2 = pysojic::make_shared<std::string>("Hello the world");
+    std::cout << *sp2 << std::endl;
+    sp = std::move(sp2);
+    {
+    pysojic::SharedPtr<std::string> sp3 = sp;
+    std::cout << *sp << "refcount:" << sp.use_count() <<  std::endl;
+    }
+    std::cout << *sp << "refcount:" << sp.use_count() <<  std::endl;
+
 }
