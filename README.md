@@ -127,9 +127,8 @@ This section collects focused resources on modern C++, systems programming, perf
 
 - [Herb Sutter’s Blog](https://herbsutter.com/)
   — Language evolution and modern best practices.
-
-- [Guru of the Week (GotW)](https://herbsutter.com/gotw/)
-  — Guru of the Week (GotW) is a series of C++ programming problems created and written by Herb Sutter.
+  - [Guru of the Week (GotW)](https://herbsutter.com/gotw/)
+    — Guru of the Week (GotW) is a series of C++ programming problems created and written by Herb Sutter.
 
 - [Agner Fog's Blog](https://www.agner.org/optimize/#manuals)
   — A bit on the advanced side. Contains a plethora of tips/advices for low-level optimization.
