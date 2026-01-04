@@ -7,14 +7,23 @@
 
 int main()
 {
-    pysojic::SharedPtr<std::string> sp;
-    pysojic::SharedPtr<std::string> sp2 = pysojic::make_shared<std::string>("Hello the world");
-    std::cout << *sp2 << std::endl;
-    sp = std::move(sp2);
-    {
-    pysojic::SharedPtr<std::string> sp3 = sp;
-    std::cout << *sp << "refcount:" << sp.use_count() <<  std::endl;
-    }
-    std::cout << *sp << "refcount:" << sp.use_count() <<  std::endl;
+    // pysojic::SharedPtr<std::string> sp;
+    // pysojic::SharedPtr<std::string> sp2 = pysojic::make_shared<std::string>("Hello the world");
+    // std::cout << *sp2 << std::endl;
+    // sp = std::move(sp2);
+    // {
+    // pysojic::SharedPtr<std::string> sp3 = sp;
+    // std::cout << *sp << "refcount:" << sp.use_count() <<  std::endl;
+    // }
+    // std::cout << *sp << "refcount:" << sp.use_count() <<  std::endl;
+    std::cout << "Enter a number:";
 
+    int x = 10;
+    uint8_t y;
+    std::cin >> y;
+
+    x *= y;
+    std::cout << x;
+
+    return 0;
 }
