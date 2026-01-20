@@ -87,6 +87,9 @@ This section collects focused resources on modern C++, systems programming, perf
 
 - [C++ Software Design](https://api.pageplace.de/preview/DT0400.9781098113131_A49444872/preview-9781098113131_A49444872.pdf) — A systems-level look at structuring C++ codebases: interfaces, boundaries, testability, and architecture patterns tailored to large C++ projects.
 
+- [C++ Memory Management](https://www.packtpub.com/en-us/product/c-memory-management-9781805129806) — Patrice Roy’s practical guide to mastering object lifetime and memory organization in modern C++, with a strong focus on real-world constraints (real-time, embedded, games, desktop) and hands-on techniques like custom allocators/containers and allocation tuning for performance and predictability.
+
+
 
 #### Computer Architecture and Operating Systems
 
