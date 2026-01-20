@@ -166,6 +166,7 @@ namespace pysojic
     template <typename T>
     SharedPtr<T>::~SharedPtr() noexcept
     {
+        // This is wrong, need to use a compare_exchange_swap(). See pp119-122 of the C++ Mem. Mgmt book
         release();
     }
 
