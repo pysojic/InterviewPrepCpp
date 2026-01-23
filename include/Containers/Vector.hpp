@@ -63,6 +63,7 @@ Vector<T, Allocator>::Vector(size_t size)
 {
     try 
     {
+        // Could use std::uninitialized_default_construct_n for better readability and exception safety
         for (size_t i{}; i < size; ++i) 
         {
             alloc::construct(m_Allocator, &m_Arr[m_Size++]); // default constructing
@@ -85,6 +86,7 @@ Vector<T, Allocator>::Vector(size_t size, const T& value)
     {
         for (size_t i{}; i < size; ++i) 
         {
+            // Could use std::unitialized_fill for better readability and exception safety
             alloc::construct(m_Allocator, &m_Arr[m_Size++], value);
         }
     } 
