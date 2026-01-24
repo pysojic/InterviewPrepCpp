@@ -89,6 +89,9 @@ This section collects focused resources on modern C++, systems programming, perf
 
 - [C++ Memory Management](https://www.packtpub.com/en-us/product/c-memory-management-9781805129806) — Patrice Roy’s practical guide to mastering object lifetime and memory organization in modern C++, with a strong focus on real-world constraints (real-time, embedded, games, desktop) and hands-on techniques like custom allocators/containers and allocation tuning for performance and predictability.
 
+- [The Art of Writing Efficient Programs](https://ivms.com.safespacenj.org/Tech_Books/writ%20eff%20pgms.pdf) — Fedor Pikus’s deeply practical guide to performance engineering in modern C++: how to measure first, reason about where time actually goes (CPU, memory, cache), and then apply targeted optimizations without turning your codebase into a science experiment—covering profiling workflows, data locality, algorithmic trade-offs, concurrency pitfalls, and “mechanical sympathy” techniques that reliably move real-world latency/throughput.
+
+
 
 
 #### Computer Architecture and Operating Systems
