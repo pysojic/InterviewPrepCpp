@@ -30,6 +30,35 @@ How to improve:
  See a nice post from Erik Rigtorp about this here: https://rigtorp.se/spinlock/
 */
 
+/*
+NOTE 2 ABOUT SCHEDULING / YIELDING UNDER CONTENTION (WHY PURE SPINNING CAN GET WORSE)
+-----------------------------------------------------------------------------------
+The TTAS-style optimization described in NOTE 1 reduces *cache-coherence* pain (it avoids doing
+an RMW on every failed iteration), but it does NOT solve a different problem: *CPU scheduling*.
+
+If a thread fails to acquire the lock and then spins aggressively, it consumes its entire time
+slice doing “useful work” from the scheduler’s point of view (it is runnable and burning CPU).
+On an oversubscribed system (more runnable threads than cores), this can lead to a bad outcome:
+the thread that is spinning gets plenty of CPU time, while the thread that currently *holds* the
+lock (and therefore is the only one that can make progress by releasing it) may get delayed by
+the scheduler. In the worst case, the spinner effectively prevents timely execution of the lock
+holder, increasing lock hold time and overall latency.
+
+A common mitigation is to add a “polite” waiting strategy: try to acquire the lock a small number
+of times (often ~8–16 iterations is a reasonable starting point), using a CPU pause instruction
+inside the spin (e.g., _mm_pause on x86 to reduce pipeline pressure and improve SMT behavior),
+and if the lock is still not available, briefly yield or sleep so other threads can run and the
+current owner can reach unlock(). This is why you will often see implementations that do:
+  - short spin with pause/backoff
+  - then std::this_thread::yield(), nanosleep(), or a futex-based park when waiting longer
+
+Important: your current implementation is a pure TAS lock (test_and_set in a tight loop). Under
+contention it can be *both* coherence-heavy (NOTE 1) and scheduler-unfriendly (this NOTE 2),
+especially because it performs no pause/backoff and does not yield/sleep. For correctness your
+acquire/release memory ordering is fine; the issue here is performance and latency under
+contention/oversubscription.
+*/
+
 class SpinLock
 {
 public:
