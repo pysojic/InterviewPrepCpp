@@ -51,12 +51,6 @@ and if the lock is still not available, briefly yield or sleep so other threads 
 current owner can reach unlock(). This is why you will often see implementations that do:
   - short spin with pause/backoff
   - then std::this_thread::yield(), nanosleep(), or a futex-based park when waiting longer
-
-Important: your current implementation is a pure TAS lock (test_and_set in a tight loop). Under
-contention it can be *both* coherence-heavy (NOTE 1) and scheduler-unfriendly (this NOTE 2),
-especially because it performs no pause/backoff and does not yield/sleep. For correctness your
-acquire/release memory ordering is fine; the issue here is performance and latency under
-contention/oversubscription.
 */
 
 class SpinLock
