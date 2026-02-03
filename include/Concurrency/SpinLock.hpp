@@ -46,11 +46,13 @@ holder, increasing lock hold time and overall latency.
 
 A common mitigation is to add a “polite” waiting strategy: try to acquire the lock a small number
 of times (often ~8–16 iterations is a reasonable starting point), using a CPU pause instruction
-inside the spin (e.g., _mm_pause on x86 to reduce pipeline pressure and improve SMT behavior),
+inside the spin (e.g., _mm_pause on x86 to reduce pipeline pressure and improve SMT behavior, or nanosleep on Linux),
 and if the lock is still not available, briefly yield or sleep so other threads can run and the
 current owner can reach unlock(). This is why you will often see implementations that do:
   - short spin with pause/backoff
   - then std::this_thread::yield(), nanosleep(), or a futex-based park when waiting longer
+
+See Fedor Pikus' book pp 209-211. This is also mentionned in Rigtorp's blog post in note 1.
 */
 
 class SpinLock
