@@ -109,6 +109,9 @@ This section collects focused resources on modern C++, systems programming, perf
 
 - [Computer Networks: A Systems Approach](https://book.systemsapproach.org/) — A systems-oriented networking textbook that explains the Internet stack from links and switching up through routing, congestion control, and applications, with a strong focus on design principles, trade-offs, and real-world protocol behavior.
 
+- [UNIX Network Programming, Volume 1: The Sockets Networking API (Stevens/Fenner/Rudoff)](https://www.amazon.com/Unix-Network-Programming-Sockets-Networking/dp/0131411551)
+ — The definitive deep dive into socket programming: how to build robust client/server systems with TCP/UDP, handle timeouts and partial reads/writes, use nonblocking and multiplexed I/O (select/poll and related patterns), and correctly apply socket options, name resolution, and advanced topics like multicast/daemonization—exactly the kind of “no hand-waving” reference that pays off when you’re chasing correctness and latency in real networked systems.
+
 
 #### Concurrency
 
@@ -128,6 +131,9 @@ This section collects focused resources on modern C++, systems programming, perf
 
 #### HFT/Trading Systems
 - [Trading Systems Developer Interview Guide](https://www.amazon.com/Trading-Systems-Developer-Interview-Guide-ebook/dp/B08LCK6TM4) — A focused collection of real-world trading-systems interview questions and answers, with heavy emphasis on low-latency engineering, C++ performance fundamentals (memory/layout, concurrency), market microstructure basics, and the practical system-design tradeoffs you’re expected to reason about in HFT-style roles.
+
+- [High-Frequency Trading: A Practical Guide to Algorithmic Strategies and Trading Systems (2nd ed.)](https://www.amazon.com/High-Frequency-Trading-Practical-Algorithmic-Strategies/dp/1118343506)
+ — A broad, practitioner-oriented overview of HFT that connects market structure, execution mechanics, and common strategy families (e.g., market making, statistical/short-horizon signals) with practical concerns like transaction costs and risk controls; especially useful as a “map of the territory” for how HFT strategies and trading systems fit together, even if you’ll still want more systems/OS depth elsewhere for ultra-low-latency implementation details.
 
 ### Blogs
 
