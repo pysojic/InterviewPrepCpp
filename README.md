@@ -157,6 +157,9 @@ This section collects focused resources on modern C++, systems programming, perf
 - [Matt Godbolt’s Blog (xania.org)](https://xania.org/)
   — Posts on C++ tooling and performance, plus practical insights from building Compiler Explorer and exploring code generation.
 
+- [Barry Revzin's Blog](https://brevzin.github.io/)
+  — A blog by Barry Revzin covering a wide variety of Cpp-related topics
+  
 ### Articles and Papers
 - [What Every Programmer Should Know About Memory](https://lwn.net/Articles/250967/)
   — Ulrich Drepper’s classic deep dive into RAM, CPU caches, NUMA, and how modern memory hierarchies affect performance and correctness. A must-read if you care about writing cache-friendly, high-performance C/C++ and systems code.
