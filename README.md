@@ -125,6 +125,7 @@ This section collects focused resources on modern C++, systems programming, perf
 #### Algorithms
 
 - [Introduction to Algorithms (3rd Edition)](https://www.cs.mcgill.ca/~akroit/math/compsci/Cormen%20Introduction%20to%20Algorithms.pdf) — Comprehensive algorithms textbook (CLRS) covering data structures, graph algorithms, dynamic programming, and complexity analysis with mathematically rigorous treatments.
+- [Competitive Programmer's Handbook](https://cses.fi/book/book.pdf) — Practical guide to competitive programming focused on problem-solving techniques, algorithm design patterns, and efficient implementations, covering topics like data structures, graph algorithms, dynamic programming, and mathematical methods with an emphasis on coding contests and real-world performance.
 
 #### Linux
 - [The Linux Command Line: A Complete Introduction (2nd Edition)](https://www.kea.nu/files/textbooks/humblesec/thelinuxcommandline.pdf) — A hands-on introduction to the Unix shell that takes you from basic commands and pipelines to shell scripting, job control, and everyday CLI workflows, giving you the practical foundation needed to be productive and confident on Linux systems.
