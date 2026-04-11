@@ -195,3 +195,9 @@ This section collects focused resources on modern C++, systems programming, perf
 
 - [getcracked.io](https://www.getcracked.io)
   — Repository of technical interview questions spanning data structures, algorithms, system design, and more.
+
+- [Linux System Call Table](https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md)
+  — Table that contains the Linux system call numbers and their corresponding symbolic names.
+ 
+- [ARM Architecture Reference Manual](https://developer.arm.com/documentation/dui0231/b/arm-instruction-reference?lang=en)
+  — Contains the information about ARM instructions that are supported by the ARM assembler.
