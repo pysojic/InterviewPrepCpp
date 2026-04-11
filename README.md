@@ -201,3 +201,6 @@ This section collects focused resources on modern C++, systems programming, perf
  
 - [ARM Architecture Reference Manual](https://developer.arm.com/documentation/dui0231/b/arm-instruction-reference?lang=en)
   — Contains the information about ARM instructions that are supported by the ARM assembler.
+
+- [CPUlator Computer System Simulator](https://cpulator.01xz.net/)
+  — CPUlator is a Nios II, ARMv7, MIPS, and RISC-V RV32 simulator of a computer system (processor and I/O devices) and debugger that runs in a modern web browser.
