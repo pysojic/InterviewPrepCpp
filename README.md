@@ -102,6 +102,8 @@ This section collects focused resources on modern C++, systems programming, perf
 
 - [Operating Systems: Three Easy Pieces](https://www.amazon.com.be/-/en/Operating-Systems-Three-Easy-Pieces/dp/198508659X) — Concept-driven OS textbook organized around virtualization, concurrency, and persistence, with approachable explanations and hands-on projects.
 
+- [Performance Analysis and Tuning on Modern CPUs](https://faculty.cs.niu.edu/~winans/notes/patmc.pdf) — Practical, microarchitecture-focused guide to understanding CPU performance, covering profiling, bottleneck analysis, and low-level optimization techniques across modern processors, with an emphasis on real-world workloads and measurement-driven tuning.
+
 
 #### Networking
 
