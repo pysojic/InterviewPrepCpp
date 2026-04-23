@@ -206,3 +206,5 @@ This section collects focused resources on modern C++, systems programming, perf
 
 - [CPUlator Computer System Simulator](https://cpulator.01xz.net/)
   — CPUlator is a Nios II, ARMv7, MIPS, and RISC-V RV32 simulator of a computer system (processor and I/O devices) and debugger that runs in a modern web browser.
+
+- [x86 and amd64 Instruction Reference (Félix Cloutier)](https://www.felixcloutier.com/x86/) — Fast, web-friendly index of the x86 instruction set derived from Intel’s official manuals, offering concise per-instruction semantics, encodings, and operand details, widely used as a practical lookup for assembly, reverse engineering, and low-level optimization work.
