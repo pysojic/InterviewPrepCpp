@@ -162,6 +162,9 @@ This section collects focused resources on modern C++, systems programming, perf
 
 - [Barry Revzin's Blog](https://brevzin.github.io/)
   — A blog by Barry Revzin covering a wide variety of Cpp-related topics
+
+- [Easyperf (Denis Bakhvalov)](https://easyperf.net/)
+  — In-depth blog on CPU performance engineering, covering profiling, microarchitectural behavior, and compiler optimizations through practical case studies, benchmarks, and hands-on analyses aimed at building intuition for low-level performance tuning.
   
 ### Articles and Papers
 - [What Every Programmer Should Know About Memory](https://lwn.net/Articles/250967/)
